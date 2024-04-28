@@ -1,0 +1,16 @@
+## Elemento
+``` ts filename="elemento.d.ts" copy
+export type Elemento = "logo" | "banner";
+```
+
+## Contact
+``` ts filename="contact.d.ts" copy
+export interface Contact {
+  name: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  email: string;
+  address: Address;
+  socialMedias: SocialMedia[];
+}
+```

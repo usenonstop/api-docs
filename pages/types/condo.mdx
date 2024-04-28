@@ -1,0 +1,92 @@
+``` ts filename="condo.d.ts" copy
+import type { Address } from "~/types/general";
+
+type CondoFeatures =
+  | "ACADEMIA"
+  | "ACESSO_PCD"
+  | "AREA_DE_LAZER"
+  | "AR_CONDICIONADO_CENTRAL"
+  | "AREA_DE_CARGA_E_DESCARGA"
+  | "BANHEIRO_MASCULINO_FEMININO"
+  | "BAR"
+  | "BICICLETARIO"
+  | "BIKE_ROOM"
+  | "BRINQUEDOTECA"
+  | "CHURRASQUEIRA"
+  | "CINEMA"
+  | "COWORKING"
+  | "DECK_MOLHADO"
+  | "DEPOSITO_DE_ENTREGAS"
+  | "ELEVADOR"
+  | "ELEVADOR_DE_SERVICO"
+  | "ELEVADOR_DE_SHABBAT"
+  | "ELEVADOR_SOCIAL"
+  | "ESPACO_BEBE"
+  | "ESPACO_BELEZA"
+  | "ESPACO_FAMILIA"
+  | "ESPACO_KIDS"
+  | "ESPACO_GOURMET"
+  | "ESPACO_PETS"
+  | "ESTACIONAMENTO_24H"
+  | "FITNESS"
+  | "GARAGEM_COM_AUXILIO_DE_MANOBRISTA"
+  | "GERADOR"
+  | "HALL_SOCIAL_PRIVATIVO"
+  | "HONEST_MARKET"
+  | "HORTA"
+  | "INFRAESTRUTURA_MODULAR"
+  | "JARDIM"
+  | "LOBBY_COM_PE_DIREITO_DUPLO"
+  | "OFURO"
+  | "PAY_PER_USE"
+  | "PET_FRIENDLY"
+  | "PISCINA_ADULTO"
+  | "PISCINA_COBERTA"
+  | "PISCINA_AQUECIDA"
+  | "PISCINA_INFANTIL"
+  | "PLAYGROUND"
+  | "PORTARIA_24_HORAS"
+  | "PORTARIA_REMOTA"
+  | "QUADRA_DE_BEACH_TENNIS"
+  | "QUADRA_DE_FUTEBOL"
+  | "QUADRA_DE_SQUASH"
+  | "QUADRA_DE_TENIS"
+  | "QUADRA_POLIESPORTIVA"
+  | "SALA_DE_JOGOS"
+  | "SALAO_DE_FESTAS"
+  | "SAUNA_SECA"
+  | "SAUNA_UMIDA"
+  | "SEGURANCA_24H"
+  | "SERVICO_DE_ARRUMACAO"
+  | "SERVICO_DE_LAVANDERIA"
+  | "SPA"
+  | "SPORTS_BAR"
+  | "VAGAS_DE_VISITANTE"
+  | "VESTIARIO"
+  | "ZELADOR";
+
+export interface MediaFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+}
+
+export interface Media {
+  images: MediaFile[];
+  floorPlans: MediaFile[];
+  promotionalFiles: MediaFile[];
+  videos: string[];
+  tours: string[];
+}
+
+export interface CondoEmbed {
+  id: string;
+  features: CondoFeatures[];
+  media: Media;
+  name: string;
+  address: Address;
+  yearOfConstruction: number | null;
+}
+```

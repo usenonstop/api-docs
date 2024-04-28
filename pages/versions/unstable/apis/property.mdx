@@ -1,0 +1,287 @@
+## /unstable/imoveis/home
+**Method: GET**
+
+Essa rota recebe os imóveis que foram selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao) no campo "Site" com
+a tag "Home"
+
+Ela aceita duas Query Strings opcionais:
+
+``` ts filename="types.ts" copy
+limit: number
+transaction: "VENDA" | "LOCACAO"
+```
+
+O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
+
+Caso **transaction** seja **VENDA** serão excluídos os imóveis que não 
+estão disponíveis para venda.
+
+Caso **transaction** seja **LOCACAO** serão excluídos os imóveis que não 
+estão disponíveis para locação.
+
+Retorna uma lista de [CardProperty](/types/property#cardproperty)
+
+``` ts filename="actions.ts" copy
+export async function getHomeProperties(availableFor?: AvailableFor) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/home?limit=4&availableFor=${availableFor}`,
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as CardProperty[];
+  return [];
+}
+```
+<br />
+
+## /unstable/imoveis/destaque
+**Method: GET**
+
+Essa rota recebe os imóveis que foram selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao) no campo "Site" com
+a tag "Destaque"
+
+Ela aceita uma Query String opcional:
+
+``` ts filename="types.ts" copy
+limit: number
+```
+
+O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
+
+Retorna uma lista de [CardProperty](/types/property#cardproperty)
+
+``` ts filename="actions.ts" copy
+export async function getHighlights(limit: number) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/home?limit=${limit}`,
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as CardProperty[];
+  return [];
+}
+```
+<br />
+
+## /unstable/imoveis/urls
+**Method: GET**
+
+Essa rota recebe URLs criadas com foco em SEO para todos os imóveis que foram
+selecionados no [painel de integrações](https://www.usenonstop.com/integracao).
+Essas URLs podem ser utilizadas para criação de páginas estáticas.  
+
+Se você estiver usando [Next.js](https://nextjs.org/) é simples como:
+
+``` ts filename="src/app/imovel/[url]/page.tsx" copy
+export async function generateStaticParams() {
+  const urls = await getUrls();
+
+  return urls.map((url) => ({ url }));
+}
+```
+
+``` ts filename="actions.ts" copy
+export async function getUrls() {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+
+  const response = await fetch(
+    "https://www.usenonstop.com/api/unstable/imoveis/urls",
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as string[];
+  return [];
+}
+```
+<br />
+
+## /unstable/imoveis/[id]
+**Method: GET**
+
+Essa rota recebe as informações completas de um imóvel. Utilize o código nonStop
+como id (ex. PG5SM). Na URL criada pela nonStop o id é o último campo.  
+
+Por exemplo: apartamento-tipo-para-locacao-com-4-quartos-moema-sao-paulo-sp-id-PG5SM.
+
+
+
+Retorna uma [Property](/types/property#property)
+
+``` ts filename="actions.ts" copy
+export async function getProperty(base36Id: string) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/${base36Id}`, {
+    headers
+  });
+
+  if (response.ok) return (await response.json()) as Property;
+  return null;
+}
+```
+<br />
+
+## /unstable/imoveis/estados
+**Method: GET**
+
+Essa rota recebe uma lista de todos os estados que contém imóveis selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao). Essa lista pode
+ser utilizada para alimentar um dropdown nos filtros de busca por exemplo.
+
+Retorna uma lista de [UF](/types/general#uf)
+
+``` ts filename="actions.ts" copy
+export async function getStates() {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch("https://www.usenonstop.com/api/unstable/imoveis/estados", {
+    headers
+  });
+
+  if (response.ok) return (await response.json()) as UF[];
+  return null;
+}
+```
+<br />
+
+## /unstable/imoveis/cidades
+**Method: GET**
+
+Essa rota recebe uma lista de todas as cidades que contém imóveis selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao).  
+Essa lista pode ser utilizada para alimentar um autocomplete nos filtros de busca
+por exemplo.
+
+Ela aceita duas Query Strings opcionais:
+
+
+``` ts filename="types.ts" copy
+state: UF | "TODOS"
+query: string
+```
+O parâmetro **state**  restringe a busca pelo estado selecionado.  
+O parâmetro **query** faz uma busca de texto pelo termo e retorna as cidades
+correspondentes.
+
+Retorna uma lista de cidades como string.
+
+``` ts filename="actions.ts" copy
+export async function getCities({
+  state,
+  query,
+}: {
+  state: string;
+  query: string;
+}) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/cidades?state=${state}&query=${query}`,
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as string[];
+  return null;
+}
+```
+<br />
+
+
+## /unstable/imoveis/bairros
+**Method: GET**
+
+Essa rota recebe uma lista de todos os bairros que contém imóveis selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao). Eles vêm ordenados
+por relevância (os bairros com mais imóveis vêm primeiro).
+
+Essa lista pode ser utilizada para criar links para as páginas dos imóveis mais 
+relevantes.
+
+O parâmetro **limit** define a quantidade máxima de bairros que será retornada.
+
+Retorna uma lista de bairros como string.
+
+``` ts filename="actions.ts" copy
+export async function getAreas(limit: number) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/bairros?limit=${limit}`,
+    { headers },
+  );
+  if (response.ok) return (await response.json()) as string[];
+  return [];
+}
+```
+<br />
+
+
+## /unstable/imoveis/todos
+**Method: POST**
+
+Essa rota recebe uma lista de todos os imóveis selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao). 
+
+Essa lista pode ser utilizada para criar a página de busca de imóveis do site de
+uma imobiliária.
+
+Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
+
+Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
+que serão exibidas na paginação e o total de resultados.
+
+``` ts filename="actions.ts" copy
+export async function getAllProperties(body: PropertiesApiBody) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+
+  const response = await fetch("https://www.usenonstop.com/api/unstable/imoveis/todos", {
+    headers,
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+  if (response.ok)
+    return (await response.json()) as {
+      properties: CardProperty[];
+      total: number;
+    };
+  return [];
+}
+```
+<br />
+
+## /unstable/imoveis/markers
+**Method: POST**
+
+Essa rota recebe uma lista de marcadores clusterizados para mostrar no mapa. Os
+clusters são criados com todos os imóveis filtrados na rota /imoveis/todos. O campo
+**selected** mostra quais marcadores estão ativos no filtro de selectedProperties.
+
+Você precisa passar para ela um body no formato [MarkerApiBody](/types/property#markerapibody):
+
+
+Retorna  uma lista de [Marker](/types/property#marker)
+que serão exibidas na paginação e o total de resultados.
+
+``` ts filename="actions.ts" copy
+export async function getMarkers(body: MarkersApiBody) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch("https://www.usenonstop.com/api/unstable/imoveis/markers", {
+    headers,
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+  if (response.ok) return (await response.json()) as Marker[];
+  return [];
+}
+```
+<br />

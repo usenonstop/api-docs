@@ -1,0 +1,80 @@
+## /unstable/site/imagens
+**Method: GET**
+
+Essa rota recebe as imagens que o usuário seleciona em seu
+[painel de preferências](https://www.usenonstop.com/preferencias) 
+
+Ela aceita uma Query Strings obrigatória que pode ser um dos 
+[elementos](/types/site#elemento) do site:
+
+``` ts filename="types.ts" copy
+elemento: Elemento
+```
+
+Retorna a URL do elemento como string.
+
+``` ts filename="actions.ts" copy
+export async function getImage(elemento: Elemento) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/site/imagens?elemento=${elemento}`,
+    { headers },
+  );
+  if (response.ok) return (await response.json()) as string;
+  return null;
+}
+```
+<br />
+
+## /unstable/site/contato
+**Method: GET**
+
+Essa rota recebe as informações de contato que o usuário configura em seu
+[perfil](https://www.usenonstop.com/perfil) 
+
+Retorna um objeto [Contact](/types/site#contact)
+
+``` ts filename="actions.ts" copy
+export async function getContact() {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch("https://www.usenonstop.com/api/unstable/site/contato", {
+    headers
+  });
+  if (response.ok) return (await response.json()) as Contact;
+  return {
+    name: null,
+    phone: null,
+    whatsapp: null,
+    email: null,
+    address: null,
+    socialMedias: [],
+  };
+}
+```
+<br />
+
+## /unstable/site/inscrever
+**Method: GET**
+
+Essa rota serve para que visitantes no site possam se inscrever para receber 
+notícias, newsletters e campanhas por email do usuário. Os emails recebidos são
+armazenados automaticamente pela nonStop.
+
+Retorna um [Result](/types/general#result)
+
+``` ts filename="actions.ts" copy
+export async function subscribe(email: string) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenostop.com/api/unstable/site/inscrever?email=${email.toLowerCase()}`,
+    { headers },
+  );
+  const json = (await response.json()) as Result;
+  if (!json.ok) return { status: "error", error: json.error } as const;
+  return { status: "success", message: json.message } as const;
+}
+```
+<br />
