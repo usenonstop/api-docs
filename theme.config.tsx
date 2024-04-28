@@ -8,7 +8,10 @@ const config: DocsThemeConfig = {
     link: "https://github.com/usenonstop",
   },
   editLink: {
-    component: null,
+    component: () => <div></div>,
+  },
+  search: {
+    placeholder: "Busque na documentação...",
   },
   docsRepositoryBase: "https://github.com/usenonstop/api-docs",
   footer: {
