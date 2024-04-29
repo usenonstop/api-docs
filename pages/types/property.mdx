@@ -166,12 +166,12 @@ type PropertySort =
   | "zapRating"
   | "transactionStatus";
 
-type ManagedBy =
-  | "MIM_EXCLUSIVOS"
-  | "MIM_NAO_EXCLUSIVOS"
-  | "IMOBILIARIA_EXCLUSIVOS"
-  | "IMOBILIARIA_NAO_EXCLUSIVOS"
-  | "PARCEIROS";
+export interface ParkingLot {
+  id: string;
+  size: "PEQUENA" | "MEDIA" | "GRANDE";
+  type: "DETERMINADA" | "INDETERMINADA";
+  notes: string | null;
+}
 
 type Use = "COMERCIAL" | "RESIDENCIAL";
 
@@ -253,7 +253,7 @@ export interface CommonFields {
   address: Address;
   description: string;
   privateObservations: string | null;
-  parkingLots: number;
+  parkingLots: ParkingLot[];
   features: Feature[];
   mgmtDecisions: MgmtDecision[];
   pendencies: Pendency[];
