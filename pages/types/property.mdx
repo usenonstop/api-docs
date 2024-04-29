@@ -178,6 +178,7 @@ type Use = "COMERCIAL" | "RESIDENCIAL";
 interface PropertyFilter {
   state: UF;
   city: string | null;
+  area: z.string().nullable(),
   managedBy: ManagedBy[];
   use: Use[];
   residentialTypes: ResidentialType[];
