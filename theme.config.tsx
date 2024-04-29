@@ -10,6 +10,13 @@ const config: DocsThemeConfig = {
   editLink: {
     component: () => <div></div>,
   },
+  useNextSeoProps: () => {
+    return {
+      titleTemplate: "API – nonStop",
+    };
+  },
+  toc: { title: "Nesta página" },
+  feedback: { content: () => <div></div> },
   search: {
     placeholder: "Busque na documentação...",
   },
