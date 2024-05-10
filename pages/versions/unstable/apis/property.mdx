@@ -69,6 +69,42 @@ export async function getHighlights(limit: number) {
 ```
 <br />
 
+## /unstable/imoveis/similar
+**Method: GET**
+
+Essa rota recebe os imóveis que foram selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao) no campo "Site"
+e que tenham similaridade com o imóvel selecionado pela query string. A busca 
+compara tipologia, distância, e o delta de preço e área.
+
+Ela aceita duas Query Strings:
+
+``` ts filename="types.ts" copy
+id: string
+limit: number
+```
+
+O parâmetro **id** é obrigatório. Deve ser o id do imóvel com o qual se deseja comparar.
+
+O parâmetro **limit** é opcional define a quantidade máxima de imóveis que será retornada.
+
+Retorna uma lista de [CardProperty](/types/property#cardproperty)
+
+``` ts filename="actions.ts" copy
+export async function getSimilar({id, limit}: {id: string, limit: number}) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/similar?id=${id}&limit=${limit}`,
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as CardProperty[];
+  return [];
+}
+```
+<br />
+
 ## /unstable/imoveis/urls
 **Method: GET**
 
