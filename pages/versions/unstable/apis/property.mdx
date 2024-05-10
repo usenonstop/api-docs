@@ -9,15 +9,15 @@ Ela aceita duas Query Strings opcionais:
 
 ``` ts filename="types.ts" copy
 limit: number
-transaction: "VENDA" | "LOCACAO"
+availableFor: "VENDA" | "LOCACAO"
 ```
 
 O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
 
-Caso **transaction** seja **VENDA** serão excluídos os imóveis que não 
+Caso **availableFor** seja **VENDA** serão excluídos os imóveis que não 
 estão disponíveis para venda.
 
-Caso **transaction** seja **LOCACAO** serão excluídos os imóveis que não 
+Caso **availableFor** seja **LOCACAO** serão excluídos os imóveis que não 
 estão disponíveis para locação.
 
 Retorna uma lista de [CardProperty](/types/property#cardproperty)
@@ -77,11 +77,12 @@ Essa rota recebe os imóveis que foram selecionados no
 e que tenham similaridade com o imóvel selecionado pela query string. A busca 
 compara tipologia, distância, e o delta de preço e área.
 
-Ela aceita duas Query Strings:
+Ela aceita três Query Strings:
 
 ``` ts filename="types.ts" copy
 id: string
 limit: number
+availableFor: "VENDA" | "LOCACAO"
 ```
 
 O parâmetro **id** é obrigatório. Deve ser o id do imóvel com o qual se deseja comparar.
@@ -91,11 +92,19 @@ O parâmetro **limit** é opcional define a quantidade máxima de imóveis que s
 Retorna uma lista de [CardProperty](/types/property#cardproperty)
 
 ``` ts filename="actions.ts" copy
-export async function getSimilar({id, limit}: {id: string, limit: number}) {
+export async function getSimilar({
+  id,
+  limit,
+  availableFor,
+}: {
+  id: string;
+  limit: number;
+  availableFor: AvailableFor;
+}) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/similar?id=${id}&limit=${limit}`,
+    `https://www.usenonstop.com/api/unstable/imoveis/similar?id=${id}&limit=${limit}&availableFor=${availableFor}`,
     { headers },
   );
 
