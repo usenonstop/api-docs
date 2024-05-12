@@ -176,7 +176,7 @@ export interface ParkingLot {
 type Use = "COMERCIAL" | "RESIDENCIAL";
 
 interface PropertyFilter {
-  state: UF;
+  state: UF | null;
   city: string | null;
   area: z.string().nullable(),
   managedBy: ManagedBy[];
@@ -286,7 +286,7 @@ export type Property = ResidentialProperty | CommercialProperty;
 export interface PropertiesApiBody {
   pagination: Pagination;
   search: string;
-  sort: Record<PropertySort, 1 | -1>;
+  sort: Partial<Record<PropertySort, 1 | -1>>;
   selectedProperties: Location[];
   filters: PropertyFilter;
   perimeters: string[];
