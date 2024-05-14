@@ -277,6 +277,17 @@ Essa rota recebe uma lista de todos os imóveis selecionados no
 Essa lista pode ser utilizada para criar a página de busca de imóveis do site de
 uma imobiliária.
 
+Ela aceita duas Query Strings obrigatórias:
+
+``` ts filename="types.ts" copy
+currentPage: number
+perPage: number
+```
+
+O parâmetro **currentPage** define a página atual da paginação.
+
+O parâmetro **perPage** define a quantidade de resultados por página da paginação.
+
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)

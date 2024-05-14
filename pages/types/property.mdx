@@ -2,7 +2,6 @@
 import type { CondoEmbed, Media } from "~/types/condo";
 import type {
   Address,
-  Pagination,
   Location,
   UF,
   MinMax,
@@ -281,7 +280,6 @@ export type Property = ResidentialProperty | CommercialProperty;
 ## PropertiesApiBody
 ``` ts filename="api-body.d.ts" copy
 export interface PropertiesApiBody {
-  pagination: Pagination;
   search: string;
   sort: Partial<Record<PropertySort, 1 | -1>>;
   selectedProperties: Location[];
