@@ -277,11 +277,12 @@ Essa rota recebe uma lista de todos os imóveis selecionados no
 Essa lista pode ser utilizada para criar a página de busca de imóveis do site de
 uma imobiliária.
 
-Ela aceita duas Query Strings obrigatórias:
+Ela aceita três Query Strings obrigatórias:
 
 ``` ts filename="types.ts" copy
 currentPage: number
 perPage: number
+availableFor: "VENDA" | "LOCACAO"
 ```
 
 O parâmetro **currentPage** define a página atual da paginação.
@@ -323,6 +324,11 @@ clusters são criados com todos os imóveis filtrados na rota /imoveis/todos. O 
 
 Você precisa passar para ela um body no formato [MarkerApiBody](/types/property#markerapibody):
 
+Ela aceita uma Query String obrigatória:
+
+``` ts filename="types.ts" copy
+availableFor: "VENDA" | "LOCACAO"
+```
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.
