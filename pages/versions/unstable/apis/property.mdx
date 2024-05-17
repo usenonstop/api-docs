@@ -277,7 +277,7 @@ Essa rota recebe uma lista de todos os imóveis selecionados no
 Essa lista pode ser utilizada para criar a página de busca de imóveis do site de
 uma imobiliária.
 
-Ela aceita três Query Strings obrigatórias:
+Ela aceita seis Query Strings obrigatórias:
 
 ``` ts filename="types.ts" copy
 currentPage: number
@@ -285,6 +285,7 @@ perPage: number
 availableFor: "VENDA" | "LOCACAO"
 sortBy: PropertySort
 sortOrder: 1 | -1
+search: string
 ```
 
 O parâmetro **currentPage** define a página atual da paginação.
@@ -293,6 +294,9 @@ O parâmetro **perPage** define a quantidade de resultados por página da pagina
 
 Os parâmetros **sortBy** e **sortOrder** definem a ordenação dos resultados. sortBy é o campo e 1 para 
 crescente ou -1 para decrescente.
+
+O parâmetro **search** é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
+código nonStop, código imobiliária.
 
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
@@ -333,7 +337,10 @@ Ela aceita uma Query String obrigatória:
 
 ``` ts filename="types.ts" copy
 availableFor: "VENDA" | "LOCACAO"
+search: string
 ```
+O parâmetro **search** é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
+código nonStop, código imobiliária.
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.

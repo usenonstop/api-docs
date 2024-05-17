@@ -280,7 +280,6 @@ export type Property = ResidentialProperty | CommercialProperty;
 ## PropertiesApiBody
 ``` ts filename="api-body.d.ts" copy
 export interface PropertiesApiBody {
-  search: string;
   selectedProperties: Location[];
   filters: PropertyFilter;
   perimeters: string[];
@@ -291,7 +290,6 @@ export interface PropertiesApiBody {
 export interface MarkersApiBody {
   zoom: number;
   bounds: MapBounds;
-  search: string;
   selectedProperties: Location[];
   filters: PropertyFilter;
   perimeters: string[];
