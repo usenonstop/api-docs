@@ -283,11 +283,16 @@ Ela aceita três Query Strings obrigatórias:
 currentPage: number
 perPage: number
 availableFor: "VENDA" | "LOCACAO"
+sortBy: PropertySort
+sortOrder: 1 | -1
 ```
 
 O parâmetro **currentPage** define a página atual da paginação.
 
 O parâmetro **perPage** define a quantidade de resultados por página da paginação.
+
+Os parâmetros **sortBy** e **sortOrder** definem a ordenação dos resultados. sortBy é o campo e 1 para 
+crescente ou -1 para decrescente.
 
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
