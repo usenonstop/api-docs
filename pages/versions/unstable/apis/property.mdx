@@ -277,7 +277,7 @@ Essa rota recebe uma lista de todos os imóveis selecionados no
 Essa lista pode ser utilizada para criar a página de busca de imóveis do site de
 uma imobiliária.
 
-Ela aceita seis Query Strings obrigatórias:
+Ela aceita as seguintes Query Strings:
 
 ``` ts filename="types.ts" copy
 currentPage: number
@@ -286,17 +286,24 @@ availableFor: "VENDA" | "LOCACAO"
 sortBy: PropertySort
 sortOrder: 1 | -1
 search: string
+minVal: number | undefined
+maxVal: number | undefined
 ```
 
-O parâmetro **currentPage** define a página atual da paginação.
+O parâmetro **currentPage** é obrigatório define a página atual da paginação.
 
-O parâmetro **perPage** define a quantidade de resultados por página da paginação.
+O parâmetro **perPage** é obrigatório define a quantidade de resultados por página da paginação.
 
-Os parâmetros **sortBy** e **sortOrder** definem a ordenação dos resultados. sortBy é o campo e 1 para 
+O parâmetro **availableFor** é obrigatório e irá remover os imóveis que não estejam disponíveis para a transação selecionada.
+
+Os parâmetros **sortBy** e **sortOrder** são obrigatórios definem a ordenação dos resultados. sortBy é o campo e 1 para 
 crescente ou -1 para decrescente.
 
-O parâmetro **search** é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
+O parâmetro **search** é obrigatório e é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
 código nonStop, código imobiliária.
+
+Os parâmetros **minVal** e **maxVal** são opcionais e irão definir os limites de preço de acordo com o tipo de
+transação selecionada (venda ou locação).
 
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
@@ -304,11 +311,23 @@ Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 que serão exibidas na paginação e o total de resultados.
 
 ``` ts filename="actions.ts" copy
-export async function getAllProperties(body: PropertiesApiBody) {
+export async function getAllProperties(body: PropertiesApiBody, query: PropertiesQuery) {
+  const {
+    perPage,
+    currentPage,
+    availableFor,
+    sortBy,
+    sortOrder,
+    search,
+    minVal,
+    maxVal,
+  } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   headers.append("Content-Type", "application/json");
-  const response = await fetch("https://www.usenonstop.com/api/unstable/imoveis/todos", {
+  const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/todos?
+  perPage=${perPage}&currentPage=${currentPage}&availableFor=${availableFor}&sortBy=${sortBy}
+  &sortOrder=${sortOrder}&search=${search}&minVal=${minVal}&maxVal=${maxVal}`, {
     headers,
     method: "POST",
     body: JSON.stringify(body),
@@ -347,10 +366,17 @@ que serão exibidas na paginação e o total de resultados.
 
 ``` ts filename="actions.ts" copy
 export async function getMarkers(body: MarkersApiBody) {
+  const {
+    availableFor,
+    search,
+    minVal,
+    maxVal,
+  } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   headers.append("Content-Type", "application/json");
-  const response = await fetch("https://www.usenonstop.com/api/unstable/imoveis/markers", {
+  const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/markers?
+  availableFor=${availableFor}&search=${search}&minVal=${minVal}&maxVal=${maxVal}`, {
     headers,
     method: "POST",
     body: JSON.stringify(body)
