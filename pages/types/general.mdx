@@ -30,6 +30,13 @@ export interface Location {
   lng: number;
 }
 
+export type MinMaxField =
+  | "sale"
+  | "longStay"
+  | "usefulArea"
+  | "landArea"
+  | "floor";
+
 export interface MinMax {
   min: number | null;
   max: number | null;

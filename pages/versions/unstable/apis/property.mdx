@@ -274,31 +274,6 @@ export async function getAreas(limit: number) {
 Essa rota recebe um objeto com os valores mínimos e máximos para alguns campos dos
 imóveis selecionados no [painel de integrações](https://www.usenonstop.com/integracao). 
 
-``` ts filename="return.ts" copy
-{
-    "sale": {
-        "min": number | null,
-        "max": number | null
-    },
-    "longStay": {
-        "min": number | null,
-        "max": number | null
-    },
-    "usefulArea": {
-        "min": number | null,
-        "max": number | null
-    },
-    "landArea": {
-        "min": number | null,
-        "max": number | null
-    },
-    "floor": {
-        "min": number | null,
-        "max": number | null
-    }
-}
-```
-
 ``` ts filename="actions.ts" copy
 export async function getMinMax() {
   const headers = new Headers();
@@ -307,7 +282,7 @@ export async function getMinMax() {
     "https://www.usenonstop.com/api/unstable/imoveis/minmax",
     { headers },
   );
-  if (response.ok) return (await response.json()) as string[];
+  if (response.ok) return (await response.json()) as Record<MinMaxField,MinMax>;
   return [];
 }
 ```
