@@ -283,7 +283,13 @@ export async function getMinMax() {
     { headers },
   );
   if (response.ok) return (await response.json()) as Record<MinMaxField,MinMax>;
-  return [];
+  return {
+    sale: { min: null, max: null },
+    longStay: { min: null, max: null },
+    usefulArea: { min: null, max: null },
+    landArea: { min: null, max: null },
+    floor: { min: null, max: null },
+  };
 }
 ```
 <br />
