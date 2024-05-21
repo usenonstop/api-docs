@@ -184,7 +184,6 @@ interface PropertyFilter {
   status: Status[];
   accepts: (Accepts | "INDIFERENTE")[];
   face: (Face | "ANY")[];
-  floor: MinMax;
   minBaths: number | null;
   minRooms: number | null;
   minSuites: number | null;
@@ -194,10 +193,6 @@ interface PropertyFilter {
     longStay: MinMax;
     propertyTax: MinMax;
     condoFee: MinMax;
-  };
-  areas: {
-    useful: MinMax;
-    land: MinMax;
   };
 }
 

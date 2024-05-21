@@ -314,6 +314,12 @@ sortOrder: 1 | -1
 search: string
 minVal: number | undefined
 maxVal: number | undefined
+minUseful: number | undefined
+maxUseful: number | undefined
+minLand: number | undefined
+maxLand: number | undefined
+minFloor: number | undefined
+maxFloor: number | undefined
 ```
 
 O parâmetro **currentPage** é obrigatório define a página atual da paginação.
@@ -331,6 +337,12 @@ código nonStop, código imobiliária.
 Os parâmetros **minVal** e **maxVal** são opcionais e irão definir os limites de preço de acordo com o tipo de
 transação selecionada (venda ou locação).
 
+Os parâmetros **minUseful** e **maxUseful** são opcionais e irão definir os limites para área útil dos imóveis.
+
+Os parâmetros **minLand** e **maxLand** são opcionais e irão definir os limites para área de terreno dos imóveis.
+
+Os parâmetros **minFloor** e **maxFloor** são opcionais e irão definir os limites para o andar dos imóveis.
+
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
@@ -347,13 +359,21 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
     search,
     minVal,
     maxVal,
+    minUseful,
+    maxUseful,
+    minLand,
+    maxLand,
+    minFloor,
+    maxFloor
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   headers.append("Content-Type", "application/json");
   const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/todos?
   perPage=${perPage}&currentPage=${currentPage}&availableFor=${availableFor}&sortBy=${sortBy}
-  &sortOrder=${sortOrder}&search=${search}&minVal=${minVal}&maxVal=${maxVal}`, {
+  &sortOrder=${sortOrder}&search=${search}&minVal=${minVal}&maxVal=${maxVal}
+  &minUseful=${minUseful}$maxUseful=${maxUseful}$minLand=${minLand}&maxLand={maxLand}
+  &minFloor=${minFloor}&maxFloor={maxFloor}`, {
     headers,
     method: "POST",
     body: JSON.stringify(body),
@@ -378,14 +398,33 @@ clusters são criados com todos os imóveis filtrados na rota /imoveis/todos. O 
 
 Você precisa passar para ela um body no formato [MarkerApiBody](/types/property#markerapibody):
 
-Ela aceita uma Query String obrigatória:
+Ela aceita as seguintes Query Strings:
 
 ``` ts filename="types.ts" copy
 availableFor: "VENDA" | "LOCACAO"
 search: string
+minVal: number | undefined
+maxVal: number | undefined
+minUseful: number | undefined
+maxUseful: number | undefined
+minLand: number | undefined
+maxLand: number | undefined
+minFloor: number | undefined
+maxFloor: number | undefined
 ```
-O parâmetro **search** é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
+O parâmetro **availableFor** é obrigatório e irá remover os imóveis que não estejam disponíveis para a transação selecionada.
+
+O parâmetro **search** é obrigatório e é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
 código nonStop, código imobiliária.
+
+Os parâmetros **minVal** e **maxVal** são opcionais e irão definir os limites de preço de acordo com o tipo de
+transação selecionada (venda ou locação).
+
+Os parâmetros **minUseful** e **maxUseful** são opcionais e irão definir os limites para área útil dos imóveis.
+
+Os parâmetros **minLand** e **maxLand** são opcionais e irão definir os limites para área de terreno dos imóveis.
+
+Os parâmetros **minFloor** e **maxFloor** são opcionais e irão definir os limites para o andar dos imóveis.
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.
