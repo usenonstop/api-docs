@@ -1,5 +1,5 @@
 ## /unstable/imoveis/home
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe os imóveis que foram selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao) no campo "Site" com
@@ -8,8 +8,8 @@ a tag "Home"
 Ela aceita duas Query Strings opcionais:
 
 ``` ts filename="types.ts" copy
-limit: number
-availableFor: "VENDA" | "LOCACAO"
+limit?: number
+availableFor?: "VENDA" | "LOCACAO"
 ```
 
 O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
@@ -23,14 +23,19 @@ estão disponíveis para locação.
 Retorna uma lista de [CardProperty](/types/property#cardproperty)
 
 ``` ts filename="actions.ts" copy
-export async function getHomeProperties(availableFor?: AvailableFor) {
+export async function getHomeProperties({
+  limit,
+  availableFor,
+}: {
+  limit: number;
+  availableFor: AvailableFor;
+}) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/home?limit=4&availableFor=${availableFor}`,
-    { headers },
+    `${BASE_URL}/${VERSION}/imoveis/home?limit=${limit}&availablefor=${availableFor}`,
+    { headers, ...CONFIG },
   );
-
   if (response.ok) return (await response.json()) as CardProperty[];
   return [];
 }
@@ -38,7 +43,7 @@ export async function getHomeProperties(availableFor?: AvailableFor) {
 <br />
 
 ## /unstable/imoveis/destaque
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe os imóveis que foram selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao) no campo "Site" com
@@ -47,7 +52,7 @@ a tag "Destaque"
 Ela aceita uma Query String opcional:
 
 ``` ts filename="types.ts" copy
-limit: number
+limit?: number
 ```
 
 O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
@@ -55,14 +60,17 @@ O parâmetro **limit** define a quantidade máxima de imóveis que será retorna
 Retorna uma lista de [CardProperty](/types/property#cardproperty)
 
 ``` ts filename="actions.ts" copy
-export async function getHighlights(limit: number) {
+export async function getHighlights({
+  limit,
+}: {
+  limit: number;
+}) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/home?limit=${limit}`,
-    { headers },
+    `${BASE_URL}/${VERSION}/imoveis/home?limit=${limit}`,
+    { headers, ...CONFIG },
   );
-
   if (response.ok) return (await response.json()) as CardProperty[];
   return [];
 }
@@ -70,7 +78,7 @@ export async function getHighlights(limit: number) {
 <br />
 
 ## /unstable/imoveis/similar
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe os imóveis que foram selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao) no campo "Site"
@@ -81,13 +89,21 @@ Ela aceita três Query Strings:
 
 ``` ts filename="types.ts" copy
 id: string
-limit: number
+limit?: number
 availableFor: "VENDA" | "LOCACAO"
 ```
 
 O parâmetro **id** é obrigatório. Deve ser o id do imóvel com o qual se deseja comparar.
 
 O parâmetro **limit** é opcional define a quantidade máxima de imóveis que será retornada.
+
+O parâmetro **availableFor** é obrigatório. 
+
+Caso **availableFor** seja **VENDA** serão excluídos os imóveis que não 
+estão disponíveis para venda.
+
+Caso **availableFor** seja **LOCACAO** serão excluídos os imóveis que não 
+estão disponíveis para locação.
 
 Retorna uma lista de [CardProperty](/types/property#cardproperty)
 
@@ -115,7 +131,7 @@ export async function getSimilar({
 <br />
 
 ## /unstable/imoveis/urls
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe URLs criadas com foco em SEO para todos os imóveis que foram
 selecionados no [painel de integrações](https://www.usenonstop.com/integracao).
@@ -148,7 +164,7 @@ export async function getUrls() {
 <br />
 
 ## /unstable/imoveis/[id]
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe as informações completas de um imóvel. Utilize o código nonStop
 como id (ex. PG5SM). Na URL criada pela nonStop o id é o último campo.  
@@ -174,7 +190,7 @@ export async function getProperty(base36Id: string) {
 <br />
 
 ## /unstable/imoveis/estados
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe uma lista de todos os estados que contém imóveis selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao). Essa lista pode
@@ -197,21 +213,23 @@ export async function getStates() {
 <br />
 
 ## /unstable/imoveis/cidades
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe uma lista de todas as cidades que contém imóveis selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao).  
 Essa lista pode ser utilizada para alimentar um autocomplete nos filtros de busca
 por exemplo.
 
-Ela aceita duas Query Strings opcionais:
+Ela aceita três Query Strings opcionais:
 
 
 ``` ts filename="types.ts" copy
-state: UF | "TODOS"
-query: string
+state?: UF | null
+query?: string | null
+limit?: number
 ```
 O parâmetro **state**  restringe a busca pelo estado selecionado.  
+
 O parâmetro **query** faz uma busca de texto pelo termo e retorna as cidades
 correspondentes.
 
@@ -221,17 +239,18 @@ Retorna uma lista de cidades como string.
 export async function getCities({
   state,
   query,
+  limit = 10,
 }: {
-  state: string;
-  query: string;
+  state?: string | null;
+  query?: string | null;
+  limit?: number;
 }) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/cidades?state=${state}&query=${query}`,
-    { headers },
+    `${BASE_URL}/${VERSION}/imoveis/cidades?state=${state}&query=${query}&limit=${limit}`,
+    { headers, ...CONFIG },
   );
-
   if (response.ok) return (await response.json()) as string[];
   return null;
 }
@@ -240,16 +259,37 @@ export async function getCities({
 
 
 ## /unstable/imoveis/bairros
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe uma lista de todos os bairros que contém imóveis selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao). Eles vêm ordenados
 por relevância (os bairros com mais imóveis vêm primeiro).
 
 Essa lista pode ser utilizada para criar links para as páginas dos imóveis mais 
-relevantes.
+relevantes ou para alimentar um dropdown/autocomplete com as opções para filtro.
+
+Ela aceita cinco Query Strings opcionais:
+
+``` ts filename="types.ts" copy
+state?: UF | null
+city?: string | null
+query?: string | null
+limit?: number
+areas?: string[]
+```
+O parâmetro **state**  restringe a busca pelo estado selecionado.  
+
+O parâmetro **city** restringe a busca pela cidade selecionada.
+
+O parâmetro **query** faz uma busca de texto pelo termo e retorna as cidades
+correspondentes.
 
 O parâmetro **limit** define a quantidade máxima de bairros que será retornada.
+
+O parâmetro **areas** exclui da resposta os bairros da lista. Dessa forma você
+pode selecionar diversos bairros em um autocomplete e continuar recebendo uma
+quantidade de imóveis na resposta compatível com o limit, desconsiderando os
+bairros que já foram selecionados.
 
 Retorna uma lista de bairros como string.
 
@@ -258,7 +298,7 @@ export async function getAreas(limit: number) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/bairros?limit=${limit}`,
+    `https://www.usenonstop.com/api/unstable/imoveis/bairros?state=${state}&city=${city}&limit=${limit}&query=${query}&areas=${areas.join(",")}`,
     { headers },
   );
   if (response.ok) return (await response.json()) as string[];
@@ -269,7 +309,7 @@ export async function getAreas(limit: number) {
 
 
 ## /unstable/imoveis/minmax
-**Method: GET**
+**Method: <span style={{color: "green"}}>GET</span>**
 
 Essa rota recebe um objeto com os valores mínimos e máximos para alguns campos dos
 imóveis selecionados no [painel de integrações](https://www.usenonstop.com/integracao). 
@@ -295,7 +335,7 @@ export async function getMinMax() {
 <br />
 
 ## /unstable/imoveis/todos
-**Method: POST**
+**Method: <span style={{color: "red"}}>POST</span>**
 
 Essa rota recebe uma lista de todos os imóveis selecionados no
 [painel de integrações](https://www.usenonstop.com/integracao). 
@@ -311,15 +351,34 @@ perPage: number
 availableFor: "VENDA" | "LOCACAO"
 sortBy: PropertySort
 sortOrder: 1 | -1
-search: string
-minVal: number | undefined
-maxVal: number | undefined
-minUseful: number | undefined
-maxUseful: number | undefined
-minLand: number | undefined
-maxLand: number | undefined
-minFloor: number | undefined
-maxFloor: number | undefined
+search?: string
+minVal?: number
+maxVal?: number
+minUseful?: number
+maxUseful?: number
+minLand?: number
+maxLand?: number
+minFloor?: number
+maxFloor?: number
+minTax?: number
+maxTax?: number
+minCondo?: number
+maxCondo?: number
+minBaths?: number
+minRooms?: number
+minSuites?: number
+minParkingLots?: number
+accepts?: Accepts[]
+status?: Status[]
+type?: PropertyType[]
+use?: Use[]
+face?: Face[]
+state?: UF
+city?: string
+areas?: string[]
+condoFeatures?: FilterCondoFeature[]
+features?: FilterFeature[]
+userSlug?: string
 ```
 
 O parâmetro **currentPage** é obrigatório define a página atual da paginação.
@@ -343,6 +402,39 @@ Os parâmetros **minLand** e **maxLand** são opcionais e irão definir os limit
 
 Os parâmetros **minFloor** e **maxFloor** são opcionais e irão definir os limites para o andar dos imóveis.
 
+Os parâmetros **minTax** e **maxTax** são opcionais e irão definir os limites para o valor do IPTU.
+
+Os parâmetros **minCondo** e **maxCondo** são opcionais e irão definir os limites para o valor da taxa de condomínio.
+
+O parâmetro **minBaths** é opcional e irá definir a quantidade mínima de banheiros.
+
+O parâmetro **minSuites** é opcional e irá definir a quantidade mínima de suítes.
+
+O parâmetro **minParkingLots** é opcional e irá definir a quantidade mínima de vagas de garagem.
+
+O parâmetro **accepts** é opcional e irá filtrar por imóveis que aceitem permuta, financiamento, ou ambos.
+
+O parâmetro **status** é opcional e irá filtrar por imóveis que estejam em um dos status selecionados.
+
+O parâmetro **type** é opcional e irá filtrar por imóveis que sejam de uma das tipologias selecionadas.
+
+O parâmetro **use** é opcional e irá filtrar por imóveis comerciais ou residenciais.
+
+O parâmetro **face** é opcional e irá filtrar por imóveis com face para alguma das direções selecionadas.
+
+O parâmetro **state** é opcional e irá filtrar os imóveis no estado selecionado.
+
+O parâmetro **city** é opcional e irá filtrar os imóveis na cidade selecionada.
+
+O parâmetro **areas** é opcional e irá filtrar os imóveis nos bairros selecionados.
+
+O parâmetro **condoFeatures** é opcional e irá filtrar os imóveis que tenham todas as características selecionadas no condomínio.
+
+O parâmetro **features** é opcional e irá filtrar os imóveis que tenham todas as características selecionadas.
+
+O parâmetro **userSlug** é opcional e irá filtrar os imóveis onde o usuário em questão seja gestor primário ou secundário.
+
+
 Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
@@ -365,6 +457,21 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
     maxLand,
     minFloor,
     maxFloor
+    minBaths,
+    minRooms,
+    minSuites,
+    minParkingLots,
+    accepts,
+    use,
+    userSlug,
+    face,
+    status,
+    type,
+    state,
+    city,
+    areas,
+    condoFeatures,
+    features,
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
@@ -372,8 +479,11 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
   const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/todos?
   perPage=${perPage}&currentPage=${currentPage}&availableFor=${availableFor}&sortBy=${sortBy}
   &sortOrder=${sortOrder}&search=${search}&minVal=${minVal}&maxVal=${maxVal}
-  &minUseful=${minUseful}$maxUseful=${maxUseful}$minLand=${minLand}&maxLand={maxLand}
-  &minFloor=${minFloor}&maxFloor={maxFloor}`, {
+  &minUseful=${minUseful}$maxUseful=${maxUseful}$minLand=${minLand}&maxLand=${maxLand}
+  &minFloor=${minFloor}&maxFloor=${maxFloor}&minBaths=${minBaths}&minRooms${minRooms}
+  &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
+  &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
+  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}`, {
     headers,
     method: "POST",
     body: JSON.stringify(body),
@@ -390,7 +500,7 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
 <br />
 
 ## /unstable/imoveis/markers
-**Method: POST**
+**Method: <span style={{color: "red"}}>POST</span>**
 
 Essa rota recebe uma lista de marcadores clusterizados para mostrar no mapa. Os
 clusters são criados com todos os imóveis filtrados na rota /imoveis/todos. O campo
@@ -402,29 +512,36 @@ Ela aceita as seguintes Query Strings:
 
 ``` ts filename="types.ts" copy
 availableFor: "VENDA" | "LOCACAO"
-search: string
-minVal: number | undefined
-maxVal: number | undefined
-minUseful: number | undefined
-maxUseful: number | undefined
-minLand: number | undefined
-maxLand: number | undefined
-minFloor: number | undefined
-maxFloor: number | undefined
+search?: string
+minVal?: number
+maxVal?: number
+minUseful?: number
+maxUseful?: number
+minLand?: number
+maxLand?: number
+minFloor?: number
+maxFloor?: number
+minTax?: number
+maxTax?: number
+minCondo?: number
+maxCondo?: number
+minBaths?: number
+minRooms?: number
+minSuites?: number
+minParkingLots?: number
+accepts?: Accepts[]
+status?: Status[]
+type?: PropertyType[]
+use?: Use[]
+face?: Face[]
+state?: UF
+city?: string
+areas?: string[]
+condoFeatures?: FilterCondoFeature[]
+features?: FilterFeature[]
+userSlug?: string
 ```
-O parâmetro **availableFor** é obrigatório e irá remover os imóveis que não estejam disponíveis para a transação selecionada.
-
-O parâmetro **search** é obrigatório e é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
-código nonStop, código imobiliária.
-
-Os parâmetros **minVal** e **maxVal** são opcionais e irão definir os limites de preço de acordo com o tipo de
-transação selecionada (venda ou locação).
-
-Os parâmetros **minUseful** e **maxUseful** são opcionais e irão definir os limites para área útil dos imóveis.
-
-Os parâmetros **minLand** e **maxLand** são opcionais e irão definir os limites para área de terreno dos imóveis.
-
-Os parâmetros **minFloor** e **maxFloor** são opcionais e irão definir os limites para o andar dos imóveis.
+Os parâmetros daqui são os mesmos que são utilizados na rota /imoveis/todos
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.
@@ -436,12 +553,42 @@ export async function getMarkers(body: MarkersApiBody) {
     search,
     minVal,
     maxVal,
+    minUseful,
+    maxUseful,
+    minLand,
+    maxLand,
+    minFloor,
+    maxFloor,
+    minBaths,
+    minRooms,
+    minSuites,
+    minParkingLots,
+    accepts,
+    minTax,
+    maxTax,
+    minCondo,
+    maxCondo,
+    use,
+    face,
+    state,
+    city,
+    areas,
+    condoFeatures,
+    features,
+    status,
+    type,
+    userSlug,
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   headers.append("Content-Type", "application/json");
   const response = await fetch(`https://www.usenonstop.com/api/unstable/imoveis/markers?
-  availableFor=${availableFor}&search=${search}&minVal=${minVal}&maxVal=${maxVal}`, {
+  availableFor=${availableFor}&search=${search}&minVal=${minVal}&maxVal=${maxVal}
+  &minUseful=${minUseful}$maxUseful=${maxUseful}$minLand=${minLand}&maxLand=${maxLand}
+  &minFloor=${minFloor}&maxFloor=${maxFloor}&minBaths=${minBaths}&minRooms${minRooms}
+  &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
+  &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
+  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}`, {
     headers,
     method: "POST",
     body: JSON.stringify(body)
