@@ -50,6 +50,7 @@ export async function getContact() {
     email: null,
     address: null,
     socialMedias: [],
+    creci: null
   };
 }
 ```
@@ -75,6 +76,27 @@ export async function subscribe(email: string) {
   const json = (await response.json()) as Result;
   if (!json.ok) return { status: "error", error: json.error } as const;
   return { status: "success", message: json.message } as const;
+}
+```
+<br />
+
+## /unstable/site/slug
+**Method: GET**
+
+Essa rota serve para pegar o slug do usuário proprietário de determinado domínio customizado.
+
+Retorna uma string com o slug caso tenha sucesso ou um {error: string} caso falhe.
+
+``` ts filename="actions.ts" copy
+export async function getSlug({ domain }: { domain: string }) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/site/slug?dominio=${domain}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok) return (await response.json()) as string
+  return (await response.json()) as { error: string }
 }
 ```
 <br />
