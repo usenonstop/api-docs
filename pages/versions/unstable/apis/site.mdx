@@ -10,7 +10,6 @@ Ela aceita uma Query Strings obrigatória que pode ser um dos
 ``` ts filename="types.ts" copy
 elemento: Elemento
 ```
-
 Retorna a URL do elemento como string.
 
 ``` ts filename="actions.ts" copy
@@ -85,7 +84,7 @@ export async function subscribe(email: string) {
 
 Essa rota serve para pegar o slug do usuário proprietário de determinado domínio customizado.
 
-Retorna uma string com o slug caso tenha sucesso ou um {error: string} caso falhe.
+Retorna uma string com o slug caso tenha sucesso ou um `{error: string}` caso falhe.
 
 ``` ts filename="actions.ts" copy
 export async function getSlug({ domain }: { domain: string }) {
