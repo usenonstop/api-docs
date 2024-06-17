@@ -379,6 +379,8 @@ areas?: string[]
 condoFeatures?: FilterCondoFeature[]
 features?: FilterFeature[]
 userSlug?: string
+selected?: string[]
+perimeters?: string[]
 ```
 
 O parâmetro **currentPage** é obrigatório define a página atual da paginação.
@@ -434,8 +436,9 @@ O parâmetro **features** é opcional e irá filtrar os imóveis que tenham toda
 
 O parâmetro **userSlug** é opcional e irá filtrar os imóveis onde o usuário em questão seja gestor primário ou secundário.
 
+O parâmetro **selected** é opcional e aceita uma lista de coordenadas no formato: `${lat},${lng}` como string. Essa informação é usada para retornar os imóveis selecionados no mapa.
 
-Você precisa passar para ela um body no formato [PropertiesApiBody](/types/property#propertiesapibody):
+O parâmetro **perimeters** é opcional e aceita uma lista de perímetros codificados pela função: google.maps.geometry.encoding.encodePath(). Podem ser convertidos novamente em LatLngTuple[][] pela função: google.maps.geometry.encoding.decodePath()
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 que serão exibidas na paginação e o total de resultados.
@@ -472,6 +475,8 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
     areas,
     condoFeatures,
     features,
+    selected,
+    perimeters
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
@@ -483,10 +488,10 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
   &minFloor=${minFloor}&maxFloor=${maxFloor}&minBaths=${minBaths}&minRooms${minRooms}
   &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
   &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
-  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}`, {
+  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}&selected=${selected}
+  &perimeters=${perimeters}`, {
     headers,
     method: "POST",
-    body: JSON.stringify(body),
   });
 
   if (response.ok)
@@ -505,8 +510,6 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
 Essa rota recebe uma lista de marcadores clusterizados para mostrar no mapa. Os
 clusters são criados com todos os imóveis filtrados na rota /imoveis/todos. O campo
 **selected** mostra quais marcadores estão ativos no filtro de selectedProperties.
-
-Você precisa passar para ela um body no formato [MarkerApiBody](/types/property#markerapibody):
 
 Ela aceita as seguintes Query Strings:
 
@@ -540,8 +543,17 @@ areas?: string[]
 condoFeatures?: FilterCondoFeature[]
 features?: FilterFeature[]
 userSlug?: string
+selected?: string[]
+perimeters?: string[]
+zoom: number
+bounds: string
 ```
-Os parâmetros daqui são os mesmos que são utilizados na rota /imoveis/todos
+
+O parâmetro **zoom** é obrigatório e recebe um número para configurar o zoom do mapa.
+
+O parâmetro **bounds** é obrigatório e recebe uma string com uma string JSON no formato MapBounds.
+
+O restante dos parâmetros daqui são os mesmos que são utilizados na rota /imoveis/todos
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.
@@ -578,6 +590,10 @@ export async function getMarkers(body: MarkersApiBody) {
     status,
     type,
     userSlug,
+    selected,
+    perimeters
+    zoom,
+    bounds
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
@@ -588,10 +604,10 @@ export async function getMarkers(body: MarkersApiBody) {
   &minFloor=${minFloor}&maxFloor=${maxFloor}&minBaths=${minBaths}&minRooms${minRooms}
   &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
   &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
-  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}`, {
+  &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}&selected=${selected}
+  &perimeters=${perimeters}&zoom=${zoom}&bounds=${bounds}`, {
     headers,
     method: "POST",
-    body: JSON.stringify(body)
   });
   if (response.ok) return (await response.json()) as Marker[];
   return [];

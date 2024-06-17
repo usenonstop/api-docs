@@ -299,22 +299,6 @@ interface CommercialProperty extends CommonFields {
 export type Property = ResidentialProperty | CommercialProperty;
 ```
 
-## PropertiesApiBody
-``` ts filename="api-body.d.ts" copy
-export interface PropertiesApiBody {
-  selectedProperties: Location[];
-  perimeters: string[];
-}
-```
-## MarkerApiBody
-``` ts filename="markers-api-body.d.ts" copy
-export interface MarkersApiBody {
-  zoom: number;
-  bounds: MapBounds;
-  selectedProperties: Location[];
-  perimeters: string[];
-}
-```
 ## Marker
 ``` ts filename="marker.d.ts" copy
 export interface Marker {
