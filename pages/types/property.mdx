@@ -46,7 +46,7 @@ export type PropertyType =
   | "TERRENO_COMERCIAL"
   | "TERRENO_RESIDENCIAL";
 
-type AvailableFor = "VENDA" | "LOCACAO";
+type AvailableFor = "VENDA" | "LOCACAO" | "INDISPONIVEL"
 
 type Accepts = "PERMUTA" | "FINANCIAMENTO";
 
@@ -125,8 +125,6 @@ type TransactionStatus =
   | "EM_NEGOCIACAO"
   | "VENDIDO"
   | "ALUGADO"
-  | "BAIXOU_PRECO"
-  | "INDISPONIVEL";
 
 type ResidentialType =
   | "TERRENO_RESIDENCIAL"
