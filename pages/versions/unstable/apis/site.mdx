@@ -99,3 +99,45 @@ export async function getSlug({ domain }: { domain: string }) {
 }
 ```
 <br />
+
+## /unstable/site/criar-url
+**Method: GET**
+
+Essa rota serve para gerar uma url amigável.
+
+Retorna uma string com a url gerada caso tenha sucesso ou um `{error: string}` caso falhe.
+
+``` ts filename="actions.ts" copy
+export async function createUrl({ original }: { original: string }) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/site/criar-url?${original}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok) return (await response.json()) as string
+  return (await response.json()) as { error: string }
+}
+```
+<br />
+
+## /unstable/site/recuperar-url
+**Method: GET**
+
+Essa rota serve para recuperar a url original à partir de uma url amigável.
+
+Retorna uma string com a url original caso tenha sucesso ou um `{error: string}` caso falhe.
+
+``` ts filename="actions.ts" copy
+export async function retrieveUrl({ short }: { short: string }) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/site/recuperar-url?short=${short}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok) return (await response.json()) as string
+  return (await response.json()) as { error: string }
+}
+```
+<br />
