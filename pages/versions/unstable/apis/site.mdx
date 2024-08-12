@@ -141,3 +141,35 @@ export async function retrieveUrl({ short }: { short: string }) {
 }
 ```
 <br />
+
+## /unstable/site/lead
+**Method: POST**
+
+Essa rota serve para criar leads na nonStop através de um serviço externo
+
+Recebe um body no seguinte formato:
+
+``` ts filename="body.ts" copy
+  id: string //slug-do-corretor#id-do-imóvel
+  origin: "SITE" | "OUTROS"
+  phone: string | null
+  whatsapp: string | null
+  name: string | null
+  email: string,
+  message: string | null
+  transactionType: "RENT" | "SELL"
+```
+
+``` ts filename="actions.ts" copy
+export async function retrieveUrl({ body }: { body: LeadBody }) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    "${BASE_URL}/${VERSION}/site/lead",
+    { headers, body, ...CONFIG },
+  );
+  if (response.ok) return (await response.json()) as { ok: boolean }
+  return (await response.json()) as { error: string }
+}
+```
+<br />
