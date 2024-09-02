@@ -1,4 +1,126 @@
 ## Definição de imóvel que é enviado via webhook
+Os tipos mais complexos que compõe o imóvel estão definidos individualmente abaixo. Os links estão à direita.
+
+## Property
+``` ts filename="type.d.ts" copy
+export interface Property {
+  id: string;
+  use: Use;
+  type: Type;
+  rooms: number | null;
+  suites: number | null;
+  title: string;
+  condo: Condo | null;
+  availableFor: ("VENDA" | "LOCACAO" | "INDISPONIVEL")[];
+  accepts: ("PERMUTA" | "FINANCIAMENTO")[];
+  status: "LANCAMENTO" | "CONSTRUCAO" | "REFORMA" | "NOVO" | "PADRAO";
+  parkingLots: ParkingLot[];
+  baths: number;
+  floor: number | null;
+  face: Face | null;
+  user: User;
+  sharedMgmtUser: User | null;
+  registry: {
+    number: number;
+    office: string;
+  };
+  values: {
+    sale: number | null;
+    saleAssessment: number | null;
+    longStay: number | null;
+    condoFee: number | null;
+    propertyTax: number | null;
+  };
+  fees: {
+    total: number | null;
+    juridical: number | null;
+    natural: number | null;
+  };
+  areas: Areas;
+  yearOfConstruction: number | null;
+  address: Address;
+  description: string;
+  privateObservations: string | null;
+  privateId: string | null;
+  features: PropertyFeature;
+  mgmtDecisions: (
+    | "OCULTAR_ENDERECO"
+    | "OCULTAR_ANDAR"
+    | "OCULTAR_PRECO"
+    | "COMPARTILHAR_APENAS_COM_PARCEIROS"
+    | "NAO_PERMITIR_PORTAIS"
+  )[];
+  pendencies: (
+    | "ALIENACAO_FIDUCIARIA"
+    | "DEBITO_DE_CONDOMINIO"
+    | "DEBITO_DE_IPTU"
+    | "INVENTARIO"
+    | "PENHORA"
+    | "PROPRIETARIO_INCAPAZ"
+    | "USUFRUTO"
+  )[];
+  base36Id: string;
+  zapRating: number;
+  transactionStatus:
+  | "SEM_OBSERVACOES"
+  | "VENDIDO"
+  | "ALUGADO"
+  | "EM_NEGOCIACAO";
+  media: Media;
+  updatedAt: Date;
+  createdAt: Date;
+}
+```
+
+## Use
+``` ts filename="type.d.ts" copy
+type Use = "RESIDENCIAL" | "COMERCIAL" | "INDUSTRIAL" | "RURAL" | "LOGISTICO";
+```
+
+## Type
+``` ts filename="type.d.ts" copy
+type Type =
+  | "TERRENO_RESIDENCIAL"
+  | "TERRENO_RESIDENCIAL_EM_CONDOMINIO"
+  | "APARTAMENTO_GARDEN"
+  | "APARTAMENTO_TIPO"
+  | "CASA_DE_VILA"
+  | "CASA_EM_CONDOMINIO"
+  | "CASA_TIPO"
+  | "COBERTURA"
+  | "DUPLEX"
+  | "FLAT"
+  | "KITNET"
+  | "LOFT"
+  | "SOBRADO"
+  | "STUDIO"
+  | "TRIPLEX"
+  | "TERRENO_COMERCIAL"
+  | "CASA_COMERCIAL"
+  | "CONJUNTO_COMERCIAL"
+  | "EDIFICIO_MONOUSUARIO"
+  | "GALPAO_COMERCIAL"
+  | "LAGE_CORPORATIVA"
+  | "LOJA_DE_RUA"
+  | "TERRENO_INDUSTRIAL"
+  | "GALPAO_INDUSTRIAL"
+  | "TERRENO_RURAL"
+  | "CASA_RURAL"
+  | "GALPAO_LOGISTICO"
+  | "TERRENO_LOGISTICO";
+```
+
+## Condo
+``` ts filename="type.d.ts" copy
+export interface Condo {
+  id: string;
+  features: CondoFeature;
+  media: Media;
+  name: string;
+  address: Address;
+  yearOfConstruction: number;
+}
+```
 
 ## CondoFeature
 ``` ts filename="type.d.ts" copy
@@ -67,36 +189,106 @@ type CondoFeature =
   | "ZELADOR";
 ```
 
-## UF
+## ParkingLot
 ``` ts filename="type.d.ts" copy
-type UF =
-  | "AC"
-  | "AL"
-  | "AP"
-  | "AM"
-  | "BA"
-  | "CE"
-  | "DF"
-  | "ES"
-  | "GO"
-  | "MA"
-  | "MT"
-  | "MS"
-  | "MG"
-  | "PA"
-  | "PB"
-  | "PR"
-  | "PE"
-  | "PI"
-  | "RJ"
-  | "RN"
-  | "RS"
-  | "RO"
-  | "RR"
-  | "SC"
-  | "SP"
-  | "SE"
-  | "TO";
+export interface ParkingLot {
+  id: string;
+  size: "PEQUENA" | "MEDIA" | "GRANDE";
+  type: "DETERMINADA" | "INDETERMINADA";
+  notes: string | null;
+}
+```
+
+## Face
+``` ts filename="type.d.ts" copy
+type Face = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
+```
+
+## Areas
+``` ts filename="type.d.ts" copy
+export interface Areas {
+  useful: number | null;
+  total: number | null;
+  land: number | null;
+}
+```
+
+## User
+``` ts filename="type.d.ts" copy
+export interface User {
+  id: string;
+  name: string | null;
+  type:
+  | "AGENTE"
+  | "IBUYER"
+  | "INCORPORADOR"
+  | "IMOBILIARIA"
+  | "FUNDO_IMOBILIARIO"
+  | "GESTAO_DE_PATRIMONIO";
+  email: string;
+  corporateEmail: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  hrWhatsapp: string | null;
+  profileImage: string | null;
+  slug: string;
+  site: string | null;
+  zapRating: number | null;
+  reputation: number;
+  portfolio: {
+    vgv: number;
+    total: number;
+    soldVgv: number;
+    soldTotal: number;
+  };
+  brokerage: Brokerage | null;
+  network: Network | null;
+}
+```
+
+## Brokerage
+``` ts filename="type.d.ts" copy
+export interface Brokerage {
+  id: string;
+  name: string | null;
+  email: string;
+  corporateEmail: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  hrWhatsapp: string | null;
+  profileImage: string | null;
+  slug: string;
+  site: string | null;
+  type: "IMOBILIARIA";
+  network: Network | null;
+}
+```
+
+## Network
+``` ts filename="type.d.ts" copy
+export interface Network {
+  id: string;
+  name: string;
+  logo: string | null;
+}
+```
+
+
+## Address
+``` ts filename="type.d.ts" copy
+export interface Address {
+  street: string;
+  number: string;
+  complement: string | null;
+  area: string;
+  city: string;
+  state: UF;
+  zipcode: string;
+  geo: {
+    type: "Point";
+    coordinates: number[];
+  };
+}
 ```
 
 ## PropertyFeature
@@ -152,20 +344,6 @@ type PropertyFeature =
   | "VISTA_PERMANENTE";
 ```
 
-## Face
-``` ts filename="type.d.ts" copy
-type Face = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
-```
-## MediaFile
-``` ts filename="type.d.ts" copy
-export interface MediaFile {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  url: string;
-}
-```
 ## Media
 ``` ts filename="type.d.ts" copy
 export interface Media {
@@ -177,171 +355,52 @@ export interface Media {
 }
 ```
 
-## Address
+## MediaFile
 ``` ts filename="type.d.ts" copy
-export interface Address {
-  street: string;
-  number: string;
-  complement: string | null;
-  area: string;
-  city: string;
-  state: UF;
-  zipcode: string;
-  geo: {
-    type: "Point";
-    coordinates: number[];
-  };
-}
-```
-
-## Condo
-``` ts filename="type.d.ts" copy
-export interface Condo {
-  id: string;
-  features: CondoFeature;
-  media: Media;
-  name: string;
-  address: Address;
-  yearOfConstruction: number;
-}
-```
-
-## ParkingLot
-``` ts filename="type.d.ts" copy
-export interface ParkingLot {
-  id: string;
-  size: "PEQUENA" | "MEDIA" | "GRANDE";
-  type: "DETERMINADA" | "INDETERMINADA";
-  notes: string | null;
-}
-```
-
-## Brokerage
-``` ts filename="type.d.ts" copy
-export interface Brokerage {
-  id: string;
-  name: string | null;
-  email: string;
-  corporateEmail: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  hrWhatsapp: string | null;
-  profileImage: string | null;
-  slug: string;
-  site: string | null;
-  type: "IMOBILIARIA";
-  network: Network | null;
-}
-```
-
-## Network
-``` ts filename="type.d.ts" copy
-export interface Network {
+export interface MediaFile {
   id: string;
   name: string;
-  logo: string | null;
+  type: string;
+  size: number;
+  url: string;
 }
 ```
 
-## User
+
+
+## UF
 ``` ts filename="type.d.ts" copy
-export interface User {
-  id: string;
-  name: string | null;
-  type:
-  | "AGENTE"
-  | "IBUYER"
-  | "INCORPORADOR"
-  | "IMOBILIARIA"
-  | "FUNDO_IMOBILIARIO"
-  | "GESTAO_DE_PATRIMONIO";
-  email: string;
-  corporateEmail: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  hrWhatsapp: string | null;
-  profileImage: string | null;
-  slug: string;
-  site: string | null;
-  zapRating: number | null;
-  reputation: number;
-  portfolio: {
-    vgv: number;
-    total: number;
-    soldVgv: number;
-    soldTotal: number;
-  };
-  brokerage: Brokerage | null;
-  network: Network | null;
-}
+type UF =
+  | "AC"
+  | "AL"
+  | "AP"
+  | "AM"
+  | "BA"
+  | "CE"
+  | "DF"
+  | "ES"
+  | "GO"
+  | "MA"
+  | "MT"
+  | "MS"
+  | "MG"
+  | "PA"
+  | "PB"
+  | "PR"
+  | "PE"
+  | "PI"
+  | "RJ"
+  | "RN"
+  | "RS"
+  | "RO"
+  | "RR"
+  | "SC"
+  | "SP"
+  | "SE"
+  | "TO";
 ```
-## Property
-``` ts filename="type.d.ts" copy
-export interface Property {
-  id: string;
-  title: string;
-  condo: Condo | null;
-  availableFor: ("VENDA" | "LOCACAO" | "INDISPONIVEL")[];
-  accepts: ("PERMUTA" | "FINANCIAMENTO")[];
-  status: "LANCAMENTO" | "CONSTRUCAO" | "REFORMA" | "NOVO" | "PADRAO";
-  parkingLots: ParkingLot[];
-  baths: number;
-  floor: number | null;
-  face: Face | null;
-  user: User;
-  sharedMgmtUser: User | null;
-  registry: {
-    number: number;
-    office: string;
-  };
-  values: {
-    sale: number | null;
-    saleAssessment: number | null;
-    longStay: number | null;
-    condoFee: number | null;
-    propertyTax: number | null;
-  };
-  fees: {
-    total: number | null;
-    juridical: number | null;
-    natural: number | null;
-  };
-  areas: {
-    useful: number | null;
-    total: number | null;
-    land: number | null;
-  };
-  yearOfConstruction: number | null;
-  address: Address;
-  description: string;
-  privateObservations: string | null;
-  privateId: string | null;
-  features: PropertyFeature;
-  mgmtDecisions: (
-    | "OCULTAR_ENDERECO"
-    | "OCULTAR_ANDAR"
-    | "OCULTAR_PRECO"
-    | "COMPARTILHAR_APENAS_COM_PARCEIROS"
-    | "NAO_PERMITIR_PORTAIS"
-  )[];
-  pendencies: (
-    | "ALIENACAO_FIDUCIARIA"
-    | "DEBITO_DE_CONDOMINIO"
-    | "DEBITO_DE_IPTU"
-    | "INVENTARIO"
-    | "PENHORA"
-    | "PROPRIETARIO_INCAPAZ"
-    | "USUFRUTO"
-  )[];
-  base36Id: string;
-  zapRating: number;
-  transactionStatus:
-  | "SEM_OBSERVACOES"
-  | "VENDIDO"
-  | "ALUGADO"
-  | "EM_NEGOCIACAO";
-  media: Media;
-  updatedAt: Date;
-  createdAt: Date;
-}
-```
+
+
+
+
+

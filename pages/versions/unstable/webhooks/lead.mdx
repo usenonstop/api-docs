@@ -1,0 +1,60 @@
+## Definição de lead que é enviada via webhook
+Os tipos mais complexos que compõe a lead estão definidos individualmente abaixo. Os links estão à direita.
+
+## Lead
+``` ts filename="type.d.ts" copy
+export interface Lead {
+  id: string;
+  origin: LeadOrigin;
+  ogAdvertiser: User;
+  advertiser: User;
+  advertiserHistory: {
+    advertiser: User;
+    date: Date;
+  }[];
+  property: PropertyEmbed | null;
+  client: Client;
+  transactionType: "RENT" | "SELL";
+  message: string | null;
+  archived: boolean;
+  createdAt: Date;
+}
+```
+## Client
+``` ts filename="type.d.ts" copy
+export interface Client {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+}
+```
+
+## PropertyEmbed
+``` ts filename="type.d.ts" copy
+export interface PropertyEmbed {
+  id: string;
+  base36Id: string;
+  address: Address;
+  image: string | null;
+  use: Use;
+  features: PropertyFeature[];
+  type: Type;
+  areas: Areas;
+  manager: User;
+}
+```
+
+## LeadOrigin
+``` ts filename="type.d.ts" copy
+type LeadOrigin =
+  | "ZAP"
+  | "CHAVES_NA_MAO"
+  | "CASA_MINEIRA"
+  | "IMOVEL_WEB"
+  | "SP_IMOVEL"
+  | "ORULO"
+  | "INDICACAO"
+  | "SITE"
+  | "OUTROS";
+```
