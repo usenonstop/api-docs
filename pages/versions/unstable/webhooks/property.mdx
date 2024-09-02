@@ -1,3 +1,347 @@
-## Em breve
+## Definição de imóvel que é enviado via webhook
 
-Ainda não temos essa página, se precisar de alguma coisa urgente nos chame pelo whatsapp.
+## CondoFeature
+``` ts filename="type.d.ts" copy
+type CondoFeature =
+  | "ACADEMIA"
+  | "ACESSO_PCD"
+  | "AREA_DE_LAZER"
+  | "AR_CONDICIONADO_CENTRAL"
+  | "AREA_DE_CARGA_E_DESCARGA"
+  | "BANHEIRO_MASCULINO_FEMININO"
+  | "BAR"
+  | "BICICLETARIO"
+  | "BIKE_ROOM"
+  | "BRINQUEDOTECA"
+  | "CHURRASQUEIRA"
+  | "CINEMA"
+  | "COWORKING"
+  | "DECK_MOLHADO"
+  | "DEPOSITO_DE_ENTREGAS"
+  | "ELEVADOR"
+  | "ELEVADOR_DE_SERVICO"
+  | "ELEVADOR_DE_SHABBAT"
+  | "ELEVADOR_SOCIAL"
+  | "ESPACO_BEBE"
+  | "ESPACO_BELEZA"
+  | "ESPACO_FAMILIA"
+  | "ESPACO_KIDS"
+  | "ESPACO_GOURMET"
+  | "ESPACO_PETS"
+  | "ESTACIONAMENTO_24H"
+  | "FITNESS"
+  | "GARAGEM_COM_AUXILIO_DE_MANOBRISTA"
+  | "GERADOR"
+  | "HALL_SOCIAL_PRIVATIVO"
+  | "HONEST_MARKET"
+  | "HORTA"
+  | "INFRAESTRUTURA_MODULAR"
+  | "JARDIM"
+  | "LOBBY_COM_PE_DIREITO_DUPLO"
+  | "OFURO"
+  | "PAY_PER_USE"
+  | "PET_FRIENDLY"
+  | "PISCINA_ADULTO"
+  | "PISCINA_COBERTA"
+  | "PISCINA_AQUECIDA"
+  | "PISCINA_INFANTIL"
+  | "PLAYGROUND"
+  | "PORTARIA_24_HORAS"
+  | "PORTARIA_REMOTA"
+  | "QUADRA_DE_BEACH_TENNIS"
+  | "QUADRA_DE_FUTEBOL"
+  | "QUADRA_DE_SQUASH"
+  | "QUADRA_DE_TENIS"
+  | "QUADRA_POLIESPORTIVA"
+  | "SALA_DE_JOGOS"
+  | "SALAO_DE_FESTAS"
+  | "SAUNA_SECA"
+  | "SAUNA_UMIDA"
+  | "SEGURANCA_24H"
+  | "SERVICO_DE_ARRUMACAO"
+  | "SERVICO_DE_LAVANDERIA"
+  | "SPA"
+  | "SPORTS_BAR"
+  | "VAGAS_DE_VISITANTE"
+  | "VESTIARIO"
+  | "ZELADOR";
+```
+
+## UF
+``` ts filename="type.d.ts" copy
+type UF =
+  | "AC"
+  | "AL"
+  | "AP"
+  | "AM"
+  | "BA"
+  | "CE"
+  | "DF"
+  | "ES"
+  | "GO"
+  | "MA"
+  | "MT"
+  | "MS"
+  | "MG"
+  | "PA"
+  | "PB"
+  | "PR"
+  | "PE"
+  | "PI"
+  | "RJ"
+  | "RN"
+  | "RS"
+  | "RO"
+  | "RR"
+  | "SC"
+  | "SP"
+  | "SE"
+  | "TO";
+```
+
+## PropertyFeature
+``` ts filename="type.d.ts" copy
+type PropertyFeature =
+  | "ADEGA_CLIMATIZADA"
+  | "AGUA_QUENTE"
+  | "AQUECIMENTO_CENTRAL"
+  | "AQUECIMENTO_SOLAR"
+  | "ALARME"
+  | "AR_CONDICIONADO_CENTRAL"
+  | "AREA_SERVICO"
+  | "BANHEIRO_SERVICO"
+  | "BANHEIRO_SR_SRA"
+  | "CARPETE"
+  | "CHURRASQUEIRA"
+  | "CLOSET"
+  | "COPA"
+  | "COZINHA_INTEGRADA"
+  | "DEPENDENCIA_DE_FUNCIONARIO"
+  | "DEPOSITO"
+  | "DESPENSA"
+  | "ELEVADOR_PRIVATIVO"
+  | "ESPACO_GOURMET"
+  | "GAS_ENCANADO"
+  | "HALL_PRIVATIVO"
+  | "HIDROMASSAGEM"
+  | "HOME_OFFICE"
+  | "HOME_THEATER"
+  | "INFRAESTRUTURA_AR_CONDICIONADO"
+  | "INTERFONE"
+  | "JANELA_TETO_CHAO"
+  | "JARDIM"
+  | "LAREIRA"
+  | "LAVABO"
+  | "LOCACAO_NAO_ACEITA_PET"
+  | "MOBILIADO"
+  | "MOVEIS_PLANEJADOS"
+  | "OFURO"
+  | "PISCINA"
+  | "PISO_MADEIRA"
+  | "PISO_PORCELANATO"
+  | "PISO_LAMINADO"
+  | "PISO_VINILICO"
+  | "SACADA"
+  | "SALA_INTIMA"
+  | "SALA_CINEMA"
+  | "SAUNA_SECA"
+  | "SAUNA_UMIDA"
+  | "VISTA_PARA_CIDADE"
+  | "VISTA_PARA_MAR"
+  | "VISTA_PANORAMICA"
+  | "VISTA_PERMANENTE";
+```
+
+## Face
+``` ts filename="type.d.ts" copy
+type Face = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
+```
+## MediaFile
+``` ts filename="type.d.ts" copy
+export interface MediaFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+}
+```
+## Media
+``` ts filename="type.d.ts" copy
+export interface Media {
+  images: MediaFile[];
+  floorPlans: MediaFile[];
+  promotionalFiles: MediaFile[];
+  videos: string[];
+  tours: string[];
+}
+```
+
+## Address
+``` ts filename="type.d.ts" copy
+export interface Address {
+  street: string;
+  number: string;
+  complement: string | null;
+  area: string;
+  city: string;
+  state: UF;
+  zipcode: string;
+  geo: {
+    type: "Point";
+    coordinates: number[];
+  };
+}
+```
+
+## Condo
+``` ts filename="type.d.ts" copy
+export interface Condo {
+  id: string;
+  features: CondoFeature;
+  media: Media;
+  name: string;
+  address: Address;
+  yearOfConstruction: number;
+}
+```
+
+## ParkingLot
+``` ts filename="type.d.ts" copy
+export interface ParkingLot {
+  id: string;
+  size: "PEQUENA" | "MEDIA" | "GRANDE";
+  type: "DETERMINADA" | "INDETERMINADA";
+  notes: string | null;
+}
+```
+
+## Brokerage
+``` ts filename="type.d.ts" copy
+export interface Brokerage {
+  id: string;
+  name: string | null;
+  email: string;
+  corporateEmail: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  hrWhatsapp: string | null;
+  profileImage: string | null;
+  slug: string;
+  site: string | null;
+  type: "IMOBILIARIA";
+  network: Network | null;
+}
+```
+
+## Network
+``` ts filename="type.d.ts" copy
+export interface Network {
+  id: string;
+  name: string;
+  logo: string | null;
+}
+```
+
+## User
+``` ts filename="type.d.ts" copy
+export interface User {
+  id: string;
+  name: string | null;
+  type:
+  | "AGENTE"
+  | "IBUYER"
+  | "INCORPORADOR"
+  | "IMOBILIARIA"
+  | "FUNDO_IMOBILIARIO"
+  | "GESTAO_DE_PATRIMONIO";
+  email: string;
+  corporateEmail: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  hrWhatsapp: string | null;
+  profileImage: string | null;
+  slug: string;
+  site: string | null;
+  zapRating: number | null;
+  reputation: number;
+  portfolio: {
+    vgv: number;
+    total: number;
+    soldVgv: number;
+    soldTotal: number;
+  };
+  brokerage: Brokerage | null;
+  network: Network | null;
+}
+```
+## Property
+``` ts filename="type.d.ts" copy
+export interface Property {
+  id: string;
+  title: string;
+  condo: Condo | null;
+  availableFor: ("VENDA" | "LOCACAO" | "INDISPONIVEL")[];
+  accepts: ("PERMUTA" | "FINANCIAMENTO")[];
+  status: "LANCAMENTO" | "CONSTRUCAO" | "REFORMA" | "NOVO" | "PADRAO";
+  parkingLots: ParkingLot[];
+  baths: number;
+  floor: number | null;
+  face: Face | null;
+  user: User;
+  sharedMgmtUser: User | null;
+  registry: {
+    number: number;
+    office: string;
+  };
+  values: {
+    sale: number | null;
+    saleAssessment: number | null;
+    longStay: number | null;
+    condoFee: number | null;
+    propertyTax: number | null;
+  };
+  fees: {
+    total: number | null;
+    juridical: number | null;
+    natural: number | null;
+  };
+  areas: {
+    useful: number | null;
+    total: number | null;
+    land: number | null;
+  };
+  yearOfConstruction: number | null;
+  address: Address;
+  description: string;
+  privateObservations: string | null;
+  privateId: string | null;
+  features: PropertyFeature;
+  mgmtDecisions: (
+    | "OCULTAR_ENDERECO"
+    | "OCULTAR_ANDAR"
+    | "OCULTAR_PRECO"
+    | "COMPARTILHAR_APENAS_COM_PARCEIROS"
+    | "NAO_PERMITIR_PORTAIS"
+  )[];
+  pendencies: (
+    | "ALIENACAO_FIDUCIARIA"
+    | "DEBITO_DE_CONDOMINIO"
+    | "DEBITO_DE_IPTU"
+    | "INVENTARIO"
+    | "PENHORA"
+    | "PROPRIETARIO_INCAPAZ"
+    | "USUFRUTO"
+  )[];
+  base36Id: string;
+  zapRating: number;
+  transactionStatus:
+  | "SEM_OBSERVACOES"
+  | "VENDIDO"
+  | "ALUGADO"
+  | "EM_NEGOCIACAO";
+  media: Media;
+  updatedAt: Date;
+  createdAt: Date;
+}
+```
