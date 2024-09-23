@@ -173,3 +173,25 @@ export async function retrieveUrl({ body }: { body: LeadBody }) {
 }
 ```
 <br />
+
+## /unstable/site/urls
+**Method: <span style={{color: "green"}}>GET</span>**
+
+Essa rota recebe todas as URLs das páginas dos imóveis. Pode ser usada para criação de sitemap.
+
+``` ts filename="actions.ts" copy
+export async function getUrls(slug: string): Promise<string[]> {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/site/urls?slug=${slug}`,
+    {
+      headers,
+      ...CONFIG,
+    },
+  );
+  if (response.ok) return (await response.json()) as string[];
+  return [];
+}
+```
+<br />
