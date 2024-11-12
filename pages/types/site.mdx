@@ -2,6 +2,13 @@
 ``` ts filename="elemento.d.ts" copy
 export type Elemento = "logo" | "banner";
 ```
+## Brokerage
+``` ts filename="brokerage.d.ts" copy
+export type Brokerage = {
+  name: string | null;
+  profileImage: string | null;
+}
+```
 
 ## Contact
 ``` ts filename="contact.d.ts" copy
@@ -13,5 +20,7 @@ export interface Contact {
   address: Address;
   socialMedias: SocialMedia[];
   creci: string | null
+  about: string | null
+  brokerage: Brokerage | null
 }
 ```
