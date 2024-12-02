@@ -305,5 +305,6 @@ export interface Marker {
   size: number;
   selected: boolean;
   position: Location;
+  base36Ids: string[] //O marker só vem com os base36Ids para pontos únicos ou clusters em zoom > 16.
 }
 ```
