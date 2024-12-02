@@ -25,7 +25,7 @@ const config: DocsThemeConfig = {
     text: "nonStop - API",
   },
   chat: {
-    link: `https://wa.me/11947461988?text=${encodeURI(
+    link: `https://wa.me/+5511947461988?text=${encodeURI(
       "Olá Sinuhe, gostaria de falar sobre as APIs da nonStop",
     )}`,
     icon: <Whatsapp />,
