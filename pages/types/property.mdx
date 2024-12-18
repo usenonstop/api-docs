@@ -46,7 +46,11 @@ export type PropertyType =
   | "TERRENO_COMERCIAL"
   | "TERRENO_RESIDENCIAL";
 
-type AvailableFor = "VENDA" | "LOCACAO" | "INDISPONIVEL"
+
+interface Available {
+  sale: boolean;
+  longStay: boolean;
+}
 
 type Accepts = "PERMUTA" | "FINANCIAMENTO";
 
@@ -254,7 +258,7 @@ export interface CardProperty {
 ``` ts filename="property.d.ts" copy
 export interface CommonFields {
   id: string;
-  availableFor: AvailableFor[];
+  available: Available;
   accepts: Accepts[];
   title: string
   status: Status;
