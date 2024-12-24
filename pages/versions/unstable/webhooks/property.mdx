@@ -43,13 +43,7 @@ export interface Property {
   privateObservations: string | null;
   privateId: string | null;
   features: PropertyFeature;
-  mgmtDecisions: (
-    | "OCULTAR_ENDERECO"
-    | "OCULTAR_ANDAR"
-    | "OCULTAR_PRECO"
-    | "COMPARTILHAR_APENAS_COM_PARCEIROS"
-    | "NAO_PERMITIR_PORTAIS"
-  )[];
+  mgmt: Mgmt;
   pendencies: (
     | "ALIENACAO_FIDUCIARIA"
     | "DEBITO_DE_CONDOMINIO"
