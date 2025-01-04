@@ -41,13 +41,7 @@ export interface Property {
   address: Address;
   description: string;
   features: PropertyFeature;
-  mgmtDecisions: (
-    | "OCULTAR_ENDERECO"
-    | "OCULTAR_ANDAR"
-    | "OCULTAR_PRECO"
-    | "COMPARTILHAR_APENAS_COM_PARCEIROS"
-    | "NAO_PERMITIR_PORTAIS"
-  )[];
+  mgmt: Mgmt;
   pendencies: (
     | "ALIENACAO_FIDUCIARIA"
     | "DEBITO_DE_CONDOMINIO"

@@ -108,12 +108,12 @@ type Feature =
   | "VISTA_PANORAMICA"
   | "VISTA_PERMANENTE";
 
-type MgmtDecision =
-  | "OCULTAR_ENDERECO"
-  | "OCULTAR_ANDAR"
-  | "OCULTAR_PRECO"
-  | "COMPARTILHAR_APENAS_COM_PARCEIROS"
-  | "NAO_PERMITIR_PORTAIS";
+interface Mgmt {
+  hideAddress: boolean;
+  hideFloor: boolean;
+  hidePrice: boolean;
+  disallowPortals: boolean;
+}
 
 type Pendency =
   | "ALIENACAO_FIDUCIARIA"
@@ -248,7 +248,7 @@ export interface CardProperty {
   areas: Areas;
   address: Address;
   user: UserEmbed;
-  mgmtDecisions: MgmtDecision[];
+  mgmt: Mgmt;
   sharedMgmtUser: UserEmbed | null;
   createdAt: Date;
 }
@@ -275,7 +275,7 @@ export interface CommonFields {
   description: string;
   parkingLots: ParkingLot[];
   features: Feature[];
-  mgmtDecisions: MgmtDecision[];
+  mgmt: Mgmt;
   pendencies: Pendency[];
   base36Id: string;
   zapRating: number;
