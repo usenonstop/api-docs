@@ -1,3 +1,31 @@
+## Webhooks
+Disponibilizamos os seguintes webhooks para gerenciamento do site do corretor:
+
+``` ts filename="type.d.ts" copy
+interface CreatePublicationWebhook {
+  event: "publication:create";
+  propertyId: string;
+  userSlug: string;
+  property: Property;
+}
+
+interface DeletePublicationWebhook {
+  event: "publication:delete";
+  propertyId: string;
+  userSlug: string;
+}
+
+interface UpdatePropertyWebhook {
+  event: "property:update";
+  property: Property;
+}
+
+interface DeletePropertyWebhook {
+  event: "property:delete";
+  propertyId: string;
+}
+```
+
 ## Definição de imóvel que é enviado via webhook
 Os tipos mais complexos que compõe o imóvel estão definidos individualmente abaixo. Os links estão à direita.
 
