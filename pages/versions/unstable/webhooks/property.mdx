@@ -4,7 +4,6 @@ Disponibilizamos os seguintes webhooks para gerenciamento do site do corretor:
 ``` ts filename="type.d.ts" copy
 interface CreatePublicationWebhook {
   event: "publication:create";
-  propertyId: string;
   userSlug: string;
   property: Property;
 }
