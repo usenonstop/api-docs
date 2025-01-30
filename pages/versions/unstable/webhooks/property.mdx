@@ -9,21 +9,21 @@ interface CreatePublicationWebhook {
   property: Property;
 }
 
-interface DeletePublicationWebhook {
 //é enviado toda vez que o corretor remove um imóvel de seu site, ou quando o imóvel torna-se indisponível para ele
+interface DeletePublicationWebhook {
   event: "publication:delete";
   propertyId: string;
   userSlug: string;
 }
 
-interface UpdatePropertyWebhook {
 //é enviado toda vez que o ocorre a atualização de algum dos imóveis
+interface UpdatePropertyWebhook {
   event: "property:update";
   property: Property;
 }
 
-interface DeletePropertyWebhook {
 //é enviado toda vez que o ocorre a deleção de um imóvel
+interface DeletePropertyWebhook {
   event: "property:delete";
   propertyId: string;
 }
