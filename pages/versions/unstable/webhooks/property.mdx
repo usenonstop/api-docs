@@ -2,6 +2,7 @@
 Disponibilizamos os seguintes webhooks para gerenciamento do site do corretor:
 
 ``` ts filename="type.d.ts" copy
+//é enviado toda vez que o corretor adiciona um imóvel à seu site
 interface CreatePublicationWebhook {
   event: "publication:create";
   userSlug: string;
@@ -9,17 +10,20 @@ interface CreatePublicationWebhook {
 }
 
 interface DeletePublicationWebhook {
+//é enviado toda vez que o corretor remove um imóvel de seu site, ou quando o imóvel torna-se indisponível para ele
   event: "publication:delete";
   propertyId: string;
   userSlug: string;
 }
 
 interface UpdatePropertyWebhook {
+//é enviado toda vez que o ocorre a atualização de algum dos imóveis
   event: "property:update";
   property: Property;
 }
 
 interface DeletePropertyWebhook {
+//é enviado toda vez que o ocorre a deleção de um imóvel
   event: "property:delete";
   propertyId: string;
 }
