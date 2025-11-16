@@ -289,11 +289,11 @@ uma imobiliária.
 Ela aceita as seguintes Query Strings:
 
 ``` ts filename="types.ts" copy
-currentPage: number
-perPage: number
 availableFor: "VENDA" | "LOCACAO"
-sortBy: PropertySort
-sortOrder: 1 | -1
+currentPage?: number //default: 1
+perPage?: number //default: 10
+sortBy?: PropertySort //default: "_id"
+sortOrder?: 1 | -1 //default: 1
 search?: string
 minVal?: number
 maxVal?: number

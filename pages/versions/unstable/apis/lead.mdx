@@ -1,0 +1,48 @@
+## /unstable/leads/criar
+**Method: POST**
+
+Essa rota recebe um lead e dispara a notificação via whatsapp para o responsável
+
+
+``` ts filename="Lead.ts" copy
+export interface Lead {
+  listingId: string; //formato [slug-do-corretor]#[base36Id-do-imóvel]
+  origin: LeadOrigin;
+  name: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  email: string | null;
+  message: string | null;
+  transactionType: TransactionType;
+}
+
+type LeadOrigin =
+  | "ZAP"
+  | "CHAVES_NA_MAO"
+  | "CASA_MINEIRA"
+  | "IMOVEL_WEB"
+  | "SP_IMOVEL"
+  | "SITE"
+  | "DATE_A_HOME"
+  | "INDICACAO"
+  | "OUTROS";
+
+type TransactionType = "SELL" | "RENT";
+```
+
+``` ts filename="actions.ts" copy
+export async function createLead(lead: Lead) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/leads/criar`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify(lead),
+    },
+  );
+  if (response.ok) return (await response.json()) as string;
+  return null;
+}
+```

@@ -1,3 +1,14 @@
+## Webhooks
+Disponibilizamos os seguintes webhooks para leads. Se o corretor fizer parte de uma imobiliária os leads recebidos por ele ativarão os webhooks cadastrados no perfil da imobiliária apenas:
+
+``` ts filename="type.d.ts" copy
+//é enviado toda vez que o corretor recebe um lead:
+interface CreateLeadWebhook {
+  event: "lead:create";
+  userSlug: string;
+  lead: Lead;
+}
+```
 ## Definição de lead que é enviada via webhook
 Os tipos mais complexos que compõe a lead estão definidos individualmente abaixo. Os links estão à direita.
 

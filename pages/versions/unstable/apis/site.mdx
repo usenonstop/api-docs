@@ -2,7 +2,7 @@
 **Method: GET**
 
 Essa rota recebe as imagens que o usuário seleciona em seu
-[painel de preferências](https://www.usenonstop.com/preferencias) 
+[painel de gerenciamento do site](https://www.usenonstop.com/site?editar=home) 
 
 Ela aceita uma Query Strings obrigatória que pode ser um dos 
 [elementos](/types/site#elemento) do site:
@@ -192,6 +192,26 @@ export async function getUrls(slug: string): Promise<string[]> {
   );
   if (response.ok) return (await response.json()) as string[];
   return [];
+}
+```
+<br />
+
+## /unstable/site/compartilhar
+**Method: <span style={{color: "green"}}>GET</span>**
+
+Essa rota recebe o id de um imóvel e incrementa a contagem de compartilhamento com clientes
+
+``` ts filename="actions.ts" copy
+export async function incrementShareCount(id: string): Promise<void> {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/site/compartilhar?id=${id}`,
+    {
+      headers,
+      ...CONFIG,
+    },
+  );
 }
 ```
 <br />

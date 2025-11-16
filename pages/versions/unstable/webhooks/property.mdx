@@ -1,3 +1,34 @@
+## Webhooks
+Disponibilizamos os seguintes webhooks para gerenciamento do site do corretor:
+
+``` ts filename="type.d.ts" copy
+//é enviado toda vez que o corretor adiciona um imóvel à seu site
+interface CreatePublicationWebhook {
+  event: "publication:create";
+  userSlug: string;
+  property: Property;
+}
+
+//é enviado toda vez que o corretor remove um imóvel de seu site, ou quando o imóvel torna-se indisponível para ele
+interface DeletePublicationWebhook {
+  event: "publication:delete";
+  propertyId: string;
+  userSlug: string;
+}
+
+//é enviado toda vez que o ocorre a atualização de algum dos imóveis
+interface UpdatePropertyWebhook {
+  event: "property:update";
+  property: Property;
+}
+
+//é enviado toda vez que o ocorre a deleção de um imóvel
+interface DeletePropertyWebhook {
+  event: "property:delete";
+  propertyId: string;
+}
+```
+
 ## Definição de imóvel que é enviado via webhook
 Os tipos mais complexos que compõe o imóvel estão definidos individualmente abaixo. Os links estão à direita.
 
