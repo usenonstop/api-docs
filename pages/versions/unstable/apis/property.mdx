@@ -42,40 +42,6 @@ export async function getHomeProperties({
 ```
 <br />
 
-## /unstable/imoveis/destaque
-**Method: <span style={{color: "green"}}>GET</span>**
-
-Essa rota recebe os imóveis que foram selecionados no
-[painel de integrações](https://www.usenonstop.com/integracao) no campo "Site" com
-a tag "Destaque"
-
-Ela aceita uma Query String opcional:
-
-``` ts filename="types.ts" copy
-limit?: number
-```
-
-O parâmetro **limit** define a quantidade máxima de imóveis que será retornada.
-
-Retorna uma lista de [CardProperty](/types/property#cardproperty)
-
-``` ts filename="actions.ts" copy
-export async function getHighlights({
-  limit,
-}: {
-  limit: number;
-}) {
-  const headers = new Headers();
-  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
-  const response = await fetch(
-    `${BASE_URL}/${VERSION}/imoveis/home?limit=${limit}`,
-    { headers, ...CONFIG },
-  );
-  if (response.ok) return (await response.json()) as CardProperty[];
-  return [];
-}
-```
-<br />
 
 ## /unstable/imoveis/similar
 **Method: <span style={{color: "green"}}>GET</span>**
@@ -130,38 +96,6 @@ export async function getSimilar({
 ```
 <br />
 
-## /unstable/imoveis/urls
-**Method: <span style={{color: "green"}}>GET</span>**
-
-Essa rota recebe URLs criadas com foco em SEO para todos os imóveis que foram
-selecionados no [painel de integrações](https://www.usenonstop.com/integracao).
-Essas URLs podem ser utilizadas para criação de páginas estáticas.  
-
-Se você estiver usando [Next.js](https://nextjs.org/) é simples como:
-
-``` ts filename="src/app/imovel/[url]/page.tsx" copy
-export async function generateStaticParams() {
-  const urls = await getUrls();
-
-  return urls.map((url) => ({ url }));
-}
-```
-
-``` ts filename="actions.ts" copy
-export async function getUrls() {
-  const headers = new Headers();
-  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
-
-  const response = await fetch(
-    "https://www.usenonstop.com/api/unstable/imoveis/urls",
-    { headers },
-  );
-
-  if (response.ok) return (await response.json()) as string[];
-  return [];
-}
-```
-<br />
 
 ## /unstable/imoveis/[id]
 **Method: <span style={{color: "green"}}>GET</span>**
@@ -316,76 +250,6 @@ export async function getAreas({
 }
 ```
 <br />
-
-
-
-## /unstable/imoveis/ruas
-**Method: <span style={{color: "green"}}>GET</span>**
-
-Essa rota recebe uma lista de todas as ruas que contém imóveis selecionados no
-[painel de integrações](https://www.usenonstop.com/integracao). Elas vêm ordenadas
-por relevância (as ruas com mais imóveis vêm primeiro).
-
-Essa lista pode ser utilizada para criar links para as páginas dos imóveis mais 
-relevantes ou para alimentar um dropdown/autocomplete com as opções para filtro.
-
-Ela aceita as seguintes Query Strings opcionais:
-
-``` ts filename="types.ts" copy
-state?: UF | null
-city?: string | null
-area?: string | null
-query?: string | null
-limit?: number
-streets?: string[]
-```
-O parâmetro **state**  restringe a busca pelo estado selecionado.  
-
-O parâmetro **city** restringe a busca pela cidade selecionada.
-
-O parâmetro **area** restringe a busca pelo bairro selecionado.
-
-O parâmetro **query** faz uma busca de texto pelo termo e retorna as ruas
-correspondentes.
-
-O parâmetro **limit** define a quantidade máxima de bairros que será retornada.
-
-O parâmetro **streets** exclui da resposta as ruas da lista. Dessa forma você
-pode selecionar diversas ruas em um autocomplete e continuar recebendo uma
-quantidade de resultados na resposta compatível com o limit, desconsiderando as
-ruas que já foram selecionadas.
-
-Retorna uma lista de ruas como string.
-
-``` ts filename="actions.ts" copy
-export async function getStreets({
-  state,
-  city,
-  area,
-  query,
-  limit,
-  streets = [],
-}: {
-  state?: UF;
-  city?: string;
-  area?: string;
-  query?: string;
-  limit?: number;
-  streets?: string[];
-}) {
-  const headers = new Headers();
-  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
-  const response = await fetch(
-    `https://www.usenonstop.com/api/unstable/imoveis/ruas?state=${state}&city=${city}
-    &area=${area}&limit=${limit}&query=${query}&streets=${streets.join(",")}`,
-    { headers },
-  );
-  if (response.ok) return (await response.json()) as string[];
-  return [];
-}
-```
-<br />
-
 
 ## /unstable/imoveis/minmax
 **Method: <span style={{color: "green"}}>GET</span>**
