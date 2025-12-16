@@ -173,7 +173,6 @@ type PropertySort =
   | "values.sale"
   | "valuePerSquareMeter"
   | "values.longStay"
-  | "zapRating"
   | "transactionStatus";
 
 type FilterCondoFeature =
@@ -324,7 +323,6 @@ export interface CommonFields {
   fees: Fees;
   pendencies: Pendency[];
   base36Id: string;
-  zapRating: number;
   transactionStatus: TransactionStatus;
   media: Media;
   updatedAt: Date;

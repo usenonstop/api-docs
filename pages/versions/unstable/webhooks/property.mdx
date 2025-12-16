@@ -83,7 +83,6 @@ export interface Property {
     | "USUFRUTO"
   )[];
   base36Id: string;
-  zapRating: number;
   transactionStatus:
   | "SEM_OBSERVACOES"
   | "VENDIDO"
@@ -256,7 +255,6 @@ export interface User {
   profileImage: string | null;
   slug: string;
   site: string | null;
-  zapRating: number | null;
   reputation: number;
   portfolio: {
     vgv: number;
