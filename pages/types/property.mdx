@@ -115,6 +115,15 @@ interface Mgmt {
   disallowPortals: boolean;
 }
 
+interface Fees {
+  /** Percentual do VGV (ex: 0.06 = 6%) */
+  total: number | null;
+  /** Percentual da comissão paga para parceiro PJ (ex: 0.5 = 50%) */
+  juridical: number | null;
+  /** Percentual da comissão paga para parceiro PF (ex: 0.5 = 50% ou 0.4 = 40%) */
+  natural: number | null;
+}
+
 type Pendency =
   | "ALIENACAO_FIDUCIARIA"
   | "DEBITO_DE_CONDOMINIO"
@@ -312,12 +321,12 @@ export interface CommonFields {
   parkingLots: ParkingLot[];
   features: Feature[];
   mgmt: Mgmt;
+  fees: Fees;
   pendencies: Pendency[];
   base36Id: string;
   zapRating: number;
   transactionStatus: TransactionStatus;
   media: Media;
-  staticMap: string | null;
   updatedAt: Date;
   createdAt: Date;
 }
