@@ -1,7 +1,159 @@
-## Em breve
+## /unstable/agentes/todos
+**Method: <span style={{color: "green"}}>GET</span>**
 
-Ainda não temos essa página, mas já temos as APIs de agentes funcionando, veja 
-nosso [exemplo](https://github.com/usenonstop/nonstop-site). Se tiver alguma dúvida
-nos chame pelo whatsapp.
+Essa rota retorna a lista paginada de agentes vinculados à imobiliária autenticada.
+Pode ser utilizada para alimentar a página de "Equipe" ou "Corretores" do site
+da imobiliária.
 
+O usuário autenticado precisa ter um plano ativo. Os agentes são ordenados pelo
+VGV do portfólio (decrescente).
 
+Ela aceita as seguintes Query Strings:
+
+``` ts filename="types.ts" copy
+search: string
+currentPage: number
+perPage: number
+state?: UF
+city?: string
+areas?: string[]
+```
+
+O parâmetro **search** é obrigatório e faz uma busca de texto nos campos: nome,
+email, telefone, e nas áreas de atuação (estado, cidade e bairro). Use string
+vazia para não filtrar.
+
+Os parâmetros **currentPage** e **perPage** são obrigatórios e definem a paginação.
+
+O parâmetro **state** é opcional e filtra os agentes que possuem ao menos uma
+área de atuação no estado selecionado.
+
+O parâmetro **city** é opcional e filtra os agentes que possuem ao menos uma
+área de atuação na cidade selecionada.
+
+O parâmetro **areas** é opcional e aceita uma lista de bairros separados por
+vírgula. Filtra os agentes que possuem ao menos uma área de atuação em algum
+dos bairros selecionados.
+
+Retorna um objeto com a lista de [AgentsPageAgent](/types/user#agentspageagent)
+e o total de resultados.
+
+``` ts filename="actions.ts" copy
+export async function getAllAgents({
+  search,
+  currentPage,
+  perPage,
+  state,
+  city,
+  areas,
+}: {
+  search: string;
+  currentPage: number;
+  perPage: number;
+  state?: UF;
+  city?: string;
+  areas?: string[];
+}) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/agentes/todos?search=${search}&currentPage=${currentPage}
+&perPage=${perPage}&state=${state}&city=${city}&areas=${areas?.join(",")}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok)
+    return (await response.json()) as {
+      agents: AgentsPageAgent[];
+      total: number;
+    };
+  return { agents: [], total: 0 };
+}
+```
+<br />
+
+## /unstable/agentes/[slug]
+**Method: <span style={{color: "green"}}>GET</span>**
+
+Essa rota retorna o perfil completo de um agente da imobiliária autenticada,
+identificado pelo slug. Pode ser utilizada para alimentar a página de perfil
+do corretor no site.
+
+O agente precisa estar vinculado à imobiliária autenticada e o usuário
+autenticado precisa ter um plano ativo.
+
+Retorna um objeto com o [UserProfile](/types/user#userprofile) no campo `agent`.
+
+``` ts filename="actions.ts" copy
+export async function getAgent(slug: string) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/agentes/${slug}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok) {
+    const { agent } = (await response.json()) as { agent: UserProfile };
+    return agent;
+  }
+  return null;
+}
+```
+<br />
+
+## /unstable/agentes/portfolio/[slug]
+**Method: <span style={{color: "green"}}>GET</span>**
+
+Essa rota retorna a lista paginada de imóveis do portfólio do agente
+identificado pelo slug. Permite separar entre imóveis ativos (selecionados no
+[painel de integrações](https://www.usenonstop.com/integracao) do site) e
+imóveis vendidos pelo agente.
+
+O usuário autenticado precisa ter um plano ativo e CPF (caso AGENTE) ou CNPJ
+(caso pessoa jurídica) cadastrado.
+
+Ela aceita as seguintes Query Strings:
+
+``` ts filename="types.ts" copy
+currPage: number
+perPage: number
+sold: boolean
+```
+
+Os parâmetros **currPage** e **perPage** são obrigatórios e definem a paginação.
+
+O parâmetro **sold** é obrigatório. Quando **true** retorna os imóveis
+vendidos pelo agente (ordenados pelo valor de venda, decrescente). Quando
+**false** retorna os imóveis ativos do portfólio (ordenados pela data de
+criação, decrescente).
+
+Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
+e o total de resultados.
+
+``` ts filename="actions.ts" copy
+export async function getAgentPortfolio({
+  slug,
+  currPage,
+  perPage,
+  sold,
+}: {
+  slug: string;
+  currPage: number;
+  perPage: number;
+  sold: boolean;
+}) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `${BASE_URL}/${VERSION}/agentes/portfolio/${slug}?currPage=${currPage}
+&perPage=${perPage}&sold=${sold}`,
+    { headers, ...CONFIG },
+  );
+  if (response.ok)
+    return (await response.json()) as {
+      properties: CardProperty[];
+      total: number;
+    };
+  return { properties: [], total: 0 };
+}
+```
+<br />

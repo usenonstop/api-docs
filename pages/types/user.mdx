@@ -56,3 +56,85 @@ export interface Contact {
   socialMedias: SocialMedia[];
 }
 ```
+
+## ActuationArea
+``` ts filename="actuation-area.d.ts" copy
+import type { UF } from "~/types/general";
+
+export interface ActuationArea {
+  id: string;
+  state: UF;
+  city: string;
+  area: string;
+}
+```
+
+## AgentsPageAgent
+``` ts filename="agents-page-agent.d.ts" copy
+import type { ActuationArea } from "~/types/user";
+
+export interface AgentsPageAgent {
+  id: string;
+  profileImage: string | null;
+  whatsapp: string | null;
+  actuationAreas: ActuationArea[];
+  name: string;
+  email: string;
+  vgv: number;
+  slug: string;
+}
+```
+
+## UserProfile
+Perfil completo do usuário. É uma união discriminada pelo campo `type`: agentes
+(`type: "AGENTE"`) trazem `cpf`, `education`, `languages` e `brokerage`; pessoas
+jurídicas (`IBUYER`, `INCORPORADOR`, `IMOBILIARIA`, `GRUPO_IMOBILIARIO`,
+`FUNDO_IMOBILIARIO`, `GESTAO_DE_PATRIMONIO`) trazem apenas o `type`.
+
+``` ts filename="user-profile.d.ts" copy
+import type { OptionalAddress, SocialMedia, UF } from "~/types/general";
+import type { ActuationArea, BrokerageEmbed, Portfolio } from "~/types/user";
+
+type Language = "PORTUGUES" | "INGLES" | "ESPANHOL" | "FRANCES" | "ALEMAO" | "ITALIANO" | "MANDARIM" | "JAPONES";
+
+interface BaseProfile {
+  id: string;
+  slug: string;
+  name: string | null;
+  email: string;
+  corporateEmail: string | null;
+  creci: string | null;
+  profileImage: string | null;
+  about: string | null;
+  site: string | null;
+  whatsapp: string | null;
+  phone: string | null;
+  actuationAreas: ActuationArea[];
+  socialMedias: SocialMedia[];
+  partnershipRules: string | null;
+  zapRating: number | null;
+  portfolio: Portfolio;
+  reputation: number;
+  network: { id: string; name: string } | null;
+}
+
+interface AgentProfile extends BaseProfile {
+  type: "AGENTE";
+  cpf: string | null;
+  education: string | null;
+  languages: Language[];
+  brokerage: BrokerageEmbed | null;
+}
+
+interface JuridicalProfile extends BaseProfile {
+  type:
+    | "IBUYER"
+    | "INCORPORADOR"
+    | "IMOBILIARIA"
+    | "GRUPO_IMOBILIARIO"
+    | "FUNDO_IMOBILIARIO"
+    | "GESTAO_DE_PATRIMONIO";
+}
+
+export type UserProfile = AgentProfile | JuridicalProfile;
+```
