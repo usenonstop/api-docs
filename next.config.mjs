@@ -1,21 +1,21 @@
-const withNextra = require('nextra')({
-  theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.tsx',
+import nextra from 'nextra'
+
+const withNextra = nextra({
+  defaultShowCopyCode: true,
 })
 
-// CSP allowlist do site de docs (Nextra). Tudo é self-hosted: logo/ícones são
-// SVG inline, a busca é flexsearch embutida, sem analytics/fontes/scripts
-// externos. O 'unsafe-inline' cobre os scripts inline do Next (hydration) +
-// next-themes. Só em produção — o `next dev` usa eval no HMR e a policy
-// (sem 'unsafe-eval') quebraria o hot reload. HSTS já vem da config da Vercel,
-// então não duplico aqui.
+// CSP allowlist do site de docs (Nextra 4). Tudo self-hosted; 'unsafe-inline'
+// cobre os scripts inline do Next/next-themes. A busca usa Pagefind (WASM +
+// web worker), por isso 'wasm-unsafe-eval' no script-src e worker-src blob:.
+// Só em produção — o `next dev` usa eval no HMR. HSTS já vem da Vercel.
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "connect-src 'self'",
+  "worker-src 'self' blob:",
   "frame-src 'self'",
   "frame-ancestors 'self'",
   "object-src 'none'",
@@ -26,7 +26,8 @@ const csp = [
 
 const isProd = process.env.NODE_ENV === 'production'
 
-module.exports = withNextra({
+export default withNextra({
+  reactStrictMode: true,
   async headers() {
     return [
       {
@@ -35,8 +36,6 @@ module.exports = withNextra({
           ...(isProd ? [{ key: 'Content-Security-Policy', value: csp }] : []),
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          // 0 = desativa o filtro legado de XSS do browser (recomendação OWASP);
-          // a proteção real é a CSP. Fica presente para o scanner.
           { key: 'X-XSS-Protection', value: '0' },
           { key: 'Referrer-Policy', value: 'no-referrer' },
           {
