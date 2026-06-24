@@ -268,6 +268,7 @@ currentPage?: number //default: 1
 perPage?: number //default: 10
 sortBy?: PropertySort //default: "_id"
 sortOrder?: 1 | -1 //default: 1
+cursor?: string //_id do último item; ativa a paginação por seek
 search?: string
 minVal?: number
 maxVal?: number
@@ -308,6 +309,14 @@ O parâmetro **availableFor** é obrigatório e irá remover os imóveis que nã
 
 Os parâmetros **sortBy** e **sortOrder** são obrigatórios definem a ordenação dos resultados. sortBy é o campo e 1 para 
 crescente ou -1 para decrescente.
+
+O parâmetro **cursor** é opcional e ativa a paginação por *seek* (apenas com a
+ordenação padrão por `_id`), recomendada para rolagem infinita: em vez de
+`currentPage`, envie no `cursor` o `_id` do último imóvel da página anterior
+(omita-o na primeira página). A resposta passa a trazer **nextCursor** — o `_id`
+a enviar na próxima requisição, ou `null` quando não há mais páginas. O **total**
+só é retornado na primeira página (sem `cursor`); guarde-o no cliente. Sem
+`cursor`, a rota mantém a paginação clássica por `currentPage`.
 
 O parâmetro **search** é obrigatório e é usado para realizar uma busca nos seguintes campos: endereço, condomínio, 
 código nonStop, código imobiliária.
@@ -412,7 +421,8 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
   if (response.ok)
     return (await response.json()) as {
       properties: CardProperty[];
-      total: number;
+      total?: number; // sempre com currentPage; só na 1ª página (sem cursor) no seek
+      nextCursor?: string | null; // apenas na paginação por cursor
     };
   return {properties: [], total: 0};
 }
