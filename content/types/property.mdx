@@ -281,7 +281,8 @@ export interface CardProperty {
   id: string;
   type: PropertyType;
   image?: string | undefined;
-  rooms?: number | null;
+  rooms?: number | null; // null quando use !== "RESIDENCIAL"
+  suites?: number | null; // null quando use !== "RESIDENCIAL"
   parkingLots: number;
   url: string;
   condo: CondoEmbed | null;

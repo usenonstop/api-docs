@@ -369,6 +369,10 @@ O parâmetro **perimeters** é opcional e aceita uma lista de perímetros codifi
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 que serão exibidas na paginação e o total de resultados.
 
+Cada card traz **rooms** e **suites** — ambos `null` quando o imóvel não é
+residencial —, então dá para exibir dormitórios e suítes direto na listagem, sem
+uma segunda chamada na ficha do imóvel.
+
 ``` ts filename="actions.ts" copy
 export async function getAllProperties(body: PropertiesApiBody, query: PropertiesQuery) {
   const {
