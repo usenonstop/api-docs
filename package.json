@@ -27,7 +27,9 @@
       "postcss": "^8.5.25",
       "dompurify": "^3.4.13",
       "brace-expansion@5": "5.0.9",
-      "sharp": "^0.35.3"
+      "sharp": "^0.35.3",
+      "mermaid@11": "11.16.1",
+      "nanoid@3": "3.3.18"
     }
   },
   "packageManager": "pnpm@10.8.0+sha512.0e82714d1b5b43c74610193cb20734897c1d00de89d0e18420aebc5977fa13d780a9cb05734624e81ebd81cc876cd464794850641c48b9544326b5622ca29971"
