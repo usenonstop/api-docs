@@ -33,42 +33,18 @@ Authorization: Bearer [token]
 
 
 
-### Chame o host com `www` — o apex derruba o seu token
+### Sobre o `www` na URL base
 
-Repare no `www` da URL base. Ele não é decorativo: chamar `https://usenonstop.com`
-(sem `www`) faz toda requisição autenticada falhar, **mesmo com um token
-perfeitamente válido**.
+Prefira sempre `https://www.usenonstop.com/api`, que é o host canônico. Chamar
+`https://usenonstop.com` (sem `www`) funciona para as rotas de API: o apex serve
+`/api` diretamente, sem redirecionamento, então o seu header `Authorization`
+chega inteiro. Fora de `/api` o apex continua redirecionando para o `www`, como
+sempre fez.
 
-O apex responde `308` redirecionando para `https://www.usenonstop.com`. Como os dois
-são domínios diferentes, seu cliente HTTP **remove o header `Authorization` ao seguir
-esse redirecionamento** — é comportamento de especificação, não bug do cliente, e vale
-para `fetch`, `curl`, `Go net/http`, `requests` do Python e `axios`, entre outros.
-
-O resultado é que a API recebe uma requisição sem credencial nenhuma e responde:
-
-Status: 400 — `{"error":"token inválido"}`
-
-Que é exatamente a mesma resposta de um token expirado ou errado. Por isso o sintoma
-engana: a mensagem acusa o token, mas o token está certo — o que se perdeu foi o
-header, no meio do caminho.
-
-Dá para confirmar em dez segundos. As duas chamadas abaixo usam o **mesmo** token e a
-**mesma** rota; a segunda só acrescenta a flag que força o `curl` a manter o header
-através do redirecionamento:
-
-``` bash copy
-# sem www: o header se perde no 308
-curl -sL -H "Authorization: Bearer $TOKEN" \
-  "https://usenonstop.com/api/unstable/imoveis/todos?perPage=1"
-# {"error":"token inválido"}
-
-# mesmo token, forçando o header a sobreviver ao redirecionamento
-curl -sL --location-trusted -H "Authorization: Bearer $TOKEN" \
-  "https://usenonstop.com/api/unstable/imoveis/todos?perPage=1"
-# {"properties":[...],"total":2873,"advertiser":{...}}
-```
-
-Não use `--location-trusted` como solução — ela reenvia sua credencial para qualquer
-destino do redirecionamento, o que é justamente o risco que a regra existe para evitar.
-A correção é apontar direto para o host final: **sempre `https://www.usenonstop.com/api`**,
-nunca confie no redirecionamento em chamada autenticada.
+Nem sempre foi assim. Até 18/08/2026 o apex redirecionava tudo, inclusive `/api`,
+e como o redirecionamento cruza domínios o cliente HTTP descartava o header
+`Authorization` no caminho — comportamento de especificação, válido para `fetch`,
+`curl`, `Go net/http`, `requests` e `axios`. A requisição chegava sem credencial
+nenhuma e a resposta era `403 Forbidden` (ou `400 token inválido`, dependendo da
+rota), **com o token perfeitamente válido**. Se você contornou isso de alguma
+forma, ou tem um chamado aberto por causa disso, pode voltar ao normal.
