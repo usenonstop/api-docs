@@ -148,12 +148,15 @@ export async function retrieveUrl({ short }: { short: string }) {
 
 Essa rota recebe todas as URLs das páginas dos imóveis. Pode ser usada para criação de sitemap.
 
+A conta lida é sempre a do token enviado em `Authorization` — não existe parâmetro
+para escolher outro anunciante.
+
 ``` ts filename="actions.ts" copy
-export async function getUrls(slug: string): Promise<string[]> {
+export async function getUrls(): Promise<string[]> {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
   const response = await fetch(
-    `${BASE_URL}/${VERSION}/site/urls?slug=${slug}`,
+    `${BASE_URL}/${VERSION}/site/urls`,
     {
       headers,
       ...CONFIG,

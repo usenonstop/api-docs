@@ -12,6 +12,17 @@ Para obter o token da nonStop vá para [https://www.usenonstop.com/configuracoes
 utilizado para identificar o solicitante e a validade de seu plano. Caso você suspeite que seu token esteja comprometido você pode subustituí-lo apertando o botão de refresh no canto
 superior direito.
 
+### Um token = uma conta
+
+O token é o **único** identificador do anunciante: toda rota responde sempre com os
+imóveis da conta dona do token, e não existe parâmetro de query que troque de conta.
+
+Se você atende vários clientes, precisa de **um token por cliente** — o de cada um,
+pego na conta dele. Usar o seu próprio token para ler os dados de um cliente não dá
+erro: a API responde normalmente, só que com os imóveis da **sua** conta. É por isso
+que o sintoma aparece como número que não fecha (a API devolve mais — ou menos —
+imóveis do que o cliente vê no painel dele), e não como falha de autenticação.
+
 ## Requisições
 
 A URL base é: https://www.usenonstop.com/api
