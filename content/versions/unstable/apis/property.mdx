@@ -427,10 +427,17 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
       properties: CardProperty[];
       total?: number; // sempre com currentPage; só na 1ª página (sem cursor) no seek
       nextCursor?: string | null; // apenas na paginação por cursor
+      advertiser: { id: string; slug: string; name: string | null } | null;
     };
   return {properties: [], total: 0};
 }
 ```
+
+O campo `advertiser` diz **de qual conta** vieram esses imóveis — é a conta dona do
+token enviado. Vale conferir na primeira integração e sempre que um número não
+fechar: se o `slug` não for o do cliente que você espera, o token é de outra conta
+e todos os números daquela chamada são da conta errada.
+
 <br />
 
 ## /unstable/imoveis/markers
