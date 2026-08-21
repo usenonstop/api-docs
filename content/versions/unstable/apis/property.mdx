@@ -301,11 +301,27 @@ selected?: string[]
 perimeters?: string[]
 ```
 
-O parâmetro **currentPage** é obrigatório define a página atual da paginação.
+O parâmetro **currentPage** é opcional e define a página atual da paginação
+(padrão: `1`).
 
-O parâmetro **perPage** é obrigatório define a quantidade de resultados por página da paginação.
+O parâmetro **perPage** é opcional e define a quantidade de resultados por página
+(padrão: `10`). Não há máximo.
 
-O parâmetro **availableFor** é obrigatório e irá remover os imóveis que não estejam disponíveis para a transação selecionada.
+> ⚠️ **Os nomes são `perPage` e `currentPage`** — não `limit` e `page`. A rota
+> descarta em silêncio parâmetro que não reconhece, então `?limit=100&page=2` não
+> dá erro: ela responde com os 10 primeiros imóveis, como se nada tivesse sido
+> enviado. (`limit` existe, mas em outras rotas: `/imoveis/home`,
+> `/imoveis/similar` e `/imoveis/cidades`.)
+
+O parâmetro **availableFor** é opcional e irá remover os imóveis que não estejam
+disponíveis para a transação selecionada. **Quando omitido vale `"VENDA"`.**
+
+> ⚠️ **Para sincronizar o catálogo inteiro, faça duas passadas.** Não existe valor
+> "todos": os únicos aceitos são `VENDA` e `LOCACAO`. Com o padrão, os imóveis
+> disponíveis apenas para locação nunca aparecem — e o `total` também é só o de
+> venda, então nada indica que estão faltando. Chame com `availableFor=VENDA` e
+> com `availableFor=LOCACAO` e junte os resultados pelo campo `id` (um imóvel
+> disponível para as duas transações aparece nas duas listas).
 
 Os parâmetros **sortBy** e **sortOrder** são obrigatórios definem a ordenação dos resultados. sortBy é o campo e 1 para 
 crescente ou -1 para decrescente.
