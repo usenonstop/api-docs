@@ -249,13 +249,9 @@ export interface User {
   | "GESTAO_DE_PATRIMONIO";
   email: string;
   corporateEmail: string | null;
-  phone: string | null;
   whatsapp: string | null;
-  hrWhatsapp: string | null;
   profileImage: string | null;
   slug: string;
-  site: string | null;
-  reputation: number;
   brokerage: Brokerage | null;
   network: Network | null;
 }
@@ -266,16 +262,9 @@ export interface User {
 export interface Brokerage {
   id: string;
   name: string | null;
-  email: string;
-  corporateEmail: string | null;
-  phone: string | null;
-  whatsapp: string | null;
-  hrWhatsapp: string | null;
-  profileImage: string | null;
   slug: string;
-  site: string | null;
+  profileImage: string | null;
   type: "IMOBILIARIA";
-  network: Network | null;
 }
 ```
 

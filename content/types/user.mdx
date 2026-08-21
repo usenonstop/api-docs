@@ -16,6 +16,7 @@ interface Portfolio {
   soldTotal: number;
 }
 
+// Usado por `UserProfile` (rota de perfil do corretor).
 interface BrokerageEmbed {
   id: string;
   name: string | null;
@@ -27,6 +28,24 @@ interface BrokerageEmbed {
   profileImage: string | null;
   slug: string;
   site: string | null;
+  type: "IMOBILIARIA";
+  network: NetworkEmbed | null;
+}
+
+// Usado por `UserEmbed`, que acompanha imóveis. Só identifica a loja para
+// exibição — o contato do anúncio é o `whatsapp` do corretor.
+interface ApiBrokerageEmbed {
+  id: string;
+  name: string | null;
+  slug: string;
+  profileImage: string | null;
+  type: "IMOBILIARIA";
+}
+
+interface NetworkEmbed {
+  id: string;
+  name: string;
+  logo: string | null;
 }
 
 export interface UserEmbed {
@@ -35,14 +54,11 @@ export interface UserEmbed {
   type: "AGENTE" | JuridicalType;
   email: string;
   corporateEmail: string | null;
-  phone: string | null;
   whatsapp: string | null;
-  hrWhatsapp: string | null;
   profileImage: string | null;
   slug: string;
-  site: string | null;
-  reputation: number;
-  brokerage: BrokerageEmbed | null;
+  brokerage: ApiBrokerageEmbed | null;
+  network: NetworkEmbed | null;
 }
 
 export interface Contact {
@@ -54,6 +70,28 @@ export interface Contact {
   socialMedias: SocialMedia[];
 }
 ```
+
+### Mudança no `UserEmbed`
+
+O embed que acompanha imóveis (nas APIs de imóvel e nos webhooks de publicação)
+foi enxugado dos dois lados:
+
+- **`UserEmbed`** perdeu `phone`, `hrWhatsapp`, `site` e `reputation`.
+- **`UserEmbed.brokerage`** deixou de ser `BrokerageEmbed` e virou
+  `ApiBrokerageEmbed`, que tem só o que identifica a imobiliária para exibição
+  (`id`, `name`, `slug`, `profileImage`, `type`). Saíram `email`,
+  `corporateEmail`, `phone`, `whatsapp`, `hrWhatsapp` e `site`; saiu também o
+  `network`, que continua disponível em `UserEmbed.network`.
+
+O `BrokerageEmbed` completo continua existindo e não mudou — ele é o que
+`UserProfile` devolve na rota de perfil do corretor.
+
+**Use `whatsapp` como contato** — é o campo canônico, fica no corretor e está
+preenchido em praticamente todo o acervo. Não há mais canal de contato da
+imobiliária no embed do imóvel.
+
+O `UserProfile` (rota de perfil do corretor) não mudou e segue trazendo
+`phone`, `site` e `reputation`.
 
 ## ActuationArea
 ``` ts filename="actuation-area.d.ts" copy
