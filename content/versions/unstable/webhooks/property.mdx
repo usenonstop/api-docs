@@ -217,9 +217,25 @@ export interface ParkingLot {
   id: string;
   size: "PEQUENA" | "MEDIA" | "GRANDE";
   type: "DETERMINADA" | "INDETERMINADA";
+  coverage: "COBERTA" | "DESCOBERTA" | null;
+  access: "INDEPENDENTE" | "PRESA_ENTRE_SI" | "PRESA_DE_TERCEIRO" | null;
   notes: string | null;
+  registryNumber: number | null;
 }
 ```
+
+Em **coverage** e **access**, `null` significa **não informado** — não é um
+valor default. São campos opcionais no cadastro, então a maior parte do acervo
+responde `null` até que o anunciante preencha. Trate `null` como ausência de
+informação e não como "descoberta" ou "independente".
+
+**access** descreve se a vaga exige manobrar outro carro: `INDEPENDENTE` não
+exige; `PRESA_ENTRE_SI` é presa por outra vaga do mesmo imóvel; e
+`PRESA_DE_TERCEIRO` é presa por vaga de outro condômino.
+
+Vale lembrar que **type** é um eixo diferente: `INDETERMINADA` é a vaga sorteada
+entre os condôminos. Nesse caso `coverage` costuma vir `null`, porque a
+cobertura muda a cada sorteio e não é atributo da unidade.
 
 ## Face
 ``` ts filename="type.d.ts" copy

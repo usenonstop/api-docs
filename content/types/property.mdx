@@ -242,7 +242,10 @@ export interface ParkingLot {
   id: string;
   size: "PEQUENA" | "MEDIA" | "GRANDE";
   type: "DETERMINADA" | "INDETERMINADA";
+  coverage: "COBERTA" | "DESCOBERTA" | null;
+  access: "INDEPENDENTE" | "PRESA_ENTRE_SI" | "PRESA_DE_TERCEIRO" | null;
   notes: string | null;
+  registryNumber: number | null;
 }
 
 type Use = "COMERCIAL" | "RESIDENCIAL";
