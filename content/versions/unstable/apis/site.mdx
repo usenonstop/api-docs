@@ -101,20 +101,28 @@ export async function getSlug({ domain }: { domain: string }) {
 <br />
 
 ## /unstable/site/criar-url
-**Method: GET**
+**Method: POST**
 
 Essa rota serve para gerar uma url amigável.
 
+Diferente das outras rotas de site, os parâmetros vão no CORPO em JSON, não na
+query string: `url` é o endereço original e `slug` é o do usuário dono do site
+— o mesmo que a rota `/unstable/site/slug`, acima, devolve. Os dois são
+obrigatórios.
+
 Retorna uma string com a url gerada caso tenha sucesso ou um `{error: string}` caso falhe.
+Quando a falha é de validação, o `error` nomeia o campo — por exemplo
+`slug: Campo obrigatório`.
 
 ``` ts filename="actions.ts" copy
-export async function createUrl({ original }: { original: string }) {
+export async function createUrl({ url, slug }: { url: string; slug: string }) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
-  const response = await fetch(
-    `${BASE_URL}/${VERSION}/site/criar-url?${original}`,
-    { headers, ...CONFIG },
-  );
+  const response = await fetch(`${BASE_URL}/${VERSION}/site/criar-url`, {
+    method: "POST",
+    body: JSON.stringify({ url, slug }),
+    headers,
+  });
   if (response.ok) return (await response.json()) as string
   return (await response.json()) as { error: string }
 }
