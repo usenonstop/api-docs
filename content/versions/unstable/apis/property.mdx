@@ -299,7 +299,7 @@ features?: FilterFeature[]
 userSlug?: string
 collectionId?: string
 selected?: string[]
-perimeters?: string[]
+paths?: string[]
 ```
 
 O parâmetro **currentPage** é opcional e define a página atual da paginação
@@ -426,8 +426,13 @@ export async function getCollectionProperties(collectionId: string) {
 
 O parâmetro **selected** é opcional e aceita uma lista de base36Ids. Essa informação é usada para retornar os imóveis selecionados no mapa.
 
-O parâmetro **perimeters** é opcional e aceita uma lista de perímetros codificados pela função: google.maps.geometry.encoding.encodePath(). Podem ser convertidos novamente em LatLngTuple[][] pela função: google.maps.geometry.encoding.decodePath()
+O parâmetro **paths** é opcional e aceita uma lista de perímetros codificados pela função: google.maps.geometry.encoding.encodePath(). Podem ser convertidos novamente em LatLngTuple[][] pela função: google.maps.geometry.encoding.decodePath()
 
+> ⚠️ **O nome do parâmetro é `paths`.** Até 28/08/2026 esta página dizia
+> `perimeters`, que a rota nunca aceitou: como ela descarta em silêncio
+> parâmetro desconhecido, quem seguiu a documentação recebeu **200 com a lista
+> inteira**, sem o recorte do mapa e sem nenhum erro. Se a sua integração
+> desenha polígono, confira o nome que está enviando.
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 que serão exibidas na paginação e o total de resultados.
@@ -469,7 +474,7 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
     condoFeatures,
     features,
     selected,
-    perimeters
+    paths
   } = query;
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
@@ -481,7 +486,7 @@ export async function getAllProperties(body: PropertiesApiBody, query: Propertie
   &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
   &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
   &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}&selected=${selected}
-  &perimeters=${perimeters}`, {
+  &paths=${paths}`, {
     headers,
   });
 
@@ -544,7 +549,7 @@ features?: FilterFeature[]
 userSlug?: string
 collectionId?: string
 selected?: string[]
-perimeters?: string[]
+paths?: string[]
 zoom: number
 bounds: string
 ```
@@ -595,7 +600,7 @@ export async function getMarkers(body: MarkersApiBody) {
     type,
     userSlug,
     selected,
-    perimeters
+    paths
     zoom,
     bounds
   } = query;
@@ -608,7 +613,7 @@ export async function getMarkers(body: MarkersApiBody) {
   &minSuites=${minSuites}&minParkingLots=${minParkingLots}&accepts=${accepts}&use=${use}
   &userSlug=${useSlug}&face=${face}&status=${status}&type=${type}&state=${state}&city=${city}
   &areas=${areas}&condoFeatures=${condoFeatures}&features=${features}&selected=${selected}
-  &perimeters=${perimeters}&zoom=${zoom}&bounds=${bounds}`, {
+  &paths=${paths}&zoom=${zoom}&bounds=${bounds}`, {
     headers,
   });
   if (response.ok) return (await response.json()) as Marker[];
