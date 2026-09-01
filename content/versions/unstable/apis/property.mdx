@@ -297,6 +297,7 @@ areas?: string[]
 condoFeatures?: FilterCondoFeature[]
 features?: FilterFeature[]
 userSlug?: string
+collectionId?: string
 selected?: string[]
 perimeters?: string[]
 ```
@@ -378,9 +379,55 @@ O parâmetro **features** é opcional e irá filtrar os imóveis que tenham toda
 
 O parâmetro **userSlug** é opcional e irá filtrar os imóveis onde o usuário em questão seja gestor primário ou secundário.
 
+O parâmetro **collectionId** é opcional e restringe a resposta aos imóveis de uma
+**coleção** — o filtro salvo em [/colecoes](https://www.usenonstop.com/colecoes)
+no painel da nonStop. É a forma de publicar um recorte do inventário (a carteira
+de um cliente, os imóveis de uma campanha, os lançamentos de um bairro) sem
+repetir critério nenhum na query string: todos os filtros salvos na coleção
+passam a valer de uma vez — inclusive os que **não existem** como parâmetro
+desta rota, como perímetro no mapa, exclusividade, gestor e "imóvel anunciado".
+
+Para descobrir o id, abra `/colecoes`, clique em compartilhar no card da coleção
+e copie o valor de `collectionId` do link.
+
+A coleção só **estreita**: o resultado é sempre a interseção com os imóveis
+selecionados no painel de integrações, então ela nunca devolve um imóvel que não
+esteja publicado no site. Paginação, `total` e ordenação seguem valendo
+normalmente, já sobre o conjunto reduzido.
+
+``` ts filename="actions.ts" copy
+export async function getCollectionProperties(collectionId: string) {
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${env.NONSTOP_TOKEN}`);
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/imoveis/todos?availableFor=VENDA&perPage=24&currentPage=1&collectionId=${collectionId}`,
+    { headers },
+  );
+
+  if (response.ok) return (await response.json()) as { properties: CardProperty[]; total: number };
+  return { properties: [], total: 0 };
+}
+```
+
+> ⚠️ **Coleção inexistente é erro, não lista cheia.** Se o `collectionId` não
+> existir — ou não for um id válido — a resposta é **400** com
+> `{"error": "Coleção não encontrada"}` (ou `"Coleção inválida"`). A rota nunca
+> cai de volta para o inventário inteiro: quem filtra por coleção está
+> justamente *excluindo* imóveis, e responder a lista completa em silêncio
+> publicaria imóvel a mais.
+
+> ⚠️ **Os critérios se somam, não se substituem.** O que vem na query string
+> vale *junto* com o que está salvo na coleção. O caso que mais pega: esta rota
+> assume `availableFor=VENDA` quando o parâmetro é omitido, então uma coleção de
+> **locação** chamada sem `availableFor=LOCACAO` devolve apenas os imóveis que
+> também estão à venda — uma lista *curta*, não vazia, e sem erro nenhum para
+> avisar (numa conta real: 29 imóveis viraram 3). Se a coleção já define a
+> transação, repita a mesma transação na query string.
+
 O parâmetro **selected** é opcional e aceita uma lista de base36Ids. Essa informação é usada para retornar os imóveis selecionados no mapa.
 
 O parâmetro **perimeters** é opcional e aceita uma lista de perímetros codificados pela função: google.maps.geometry.encoding.encodePath(). Podem ser convertidos novamente em LatLngTuple[][] pela função: google.maps.geometry.encoding.decodePath()
+
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 que serão exibidas na paginação e o total de resultados.
@@ -495,6 +542,7 @@ areas?: string[]
 condoFeatures?: FilterCondoFeature[]
 features?: FilterFeature[]
 userSlug?: string
+collectionId?: string
 selected?: string[]
 perimeters?: string[]
 zoom: number
@@ -505,7 +553,11 @@ O parâmetro **zoom** é obrigatório e recebe um número para configurar o zoom
 
 O parâmetro **bounds** é obrigatório e recebe uma string com uma string JSON no formato MapBounds.
 
-O restante dos parâmetros daqui são os mesmos que são utilizados na rota /imoveis/todos
+O restante dos parâmetros daqui são os mesmos que são utilizados na rota /imoveis/todos —
+inclusive o **collectionId**, que aqui vale para os marcadores exatamente como
+vale para a lista (mesma interseção com os imóveis do site e mesmo **400** de
+coleção inexistente). Mande o mesmo `collectionId` nas duas rotas para o mapa e
+a listagem não divergirem.
 
 Retorna  uma lista de [Marker](/types/property#marker)
 que serão exibidas na paginação e o total de resultados.
