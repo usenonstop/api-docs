@@ -71,7 +71,8 @@ export interface Property {
   yearOfConstruction: number | null;
   address: Address;
   description: string;
-  features: PropertyFeature;
+  features: PropertyFeature[];
+  layout: PropertyLayout | null;
   mgmt: Mgmt;
   pendencies: (
     | "ALIENACAO_FIDUCIARIA"
@@ -138,7 +139,7 @@ type Type =
 ``` ts filename="type.d.ts" copy
 export interface Condo {
   id: string;
-  features: CondoFeature;
+  features: CondoFeature[];
   media: Media;
   name: string;
   address: Address;
@@ -320,6 +321,8 @@ export interface Address {
 
 ## PropertyFeature
 ``` ts filename="type.d.ts" copy
+type PropertyLayout = "DUPLEX" | "TRIPLEX";
+
 type PropertyFeature =
   | "ADEGA_CLIMATIZADA"
   | "AGUA_QUENTE"

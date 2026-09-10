@@ -58,6 +58,8 @@ type Status = "LANCAMENTO" | "CONSTRUCAO" | "REFORMA" | "NOVO" | "PADRAO";
 
 type Face = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
 
+type PropertyLayout = "DUPLEX" | "TRIPLEX";
+
 type Feature =
   | "ADEGA_CLIMATIZADA"
   | "AGUA_QUENTE"
@@ -332,6 +334,7 @@ export interface CommonFields {
   description: string;
   parkingLots: ParkingLot[];
   features: Feature[];
+  layout: PropertyLayout | null;
   mgmt: Mgmt;
   fees: Fees;
   pendencies: Pendency[];
