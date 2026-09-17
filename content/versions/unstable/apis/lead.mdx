@@ -3,6 +3,8 @@
 
 Essa rota recebe um lead e dispara a notificação via whatsapp para o responsável
 
+O lead é sempre entregue à conta dona do token usado na chamada. O slug do `listingId` precisa ser o dessa conta — se for de outra, a resposta é `403` e nada é criado. Para enviar leads a outra imobiliária ou corretor, use o token dela.
+
 
 ``` ts filename="Lead.ts" copy
 export interface Lead {
@@ -58,7 +60,7 @@ export async function createLead(lead: Lead) {
 Nem todo atendimento chega a um anúncio: o cliente pede para falar com uma pessoa, tira uma dúvida geral ou encerra a conversa antes de citar um imóvel. Para esses casos envie `listingId: null`.
 
 - **O campo continua obrigatório.** Lead sem imóvel é `listingId: null`, explícito. Corpo sem o campo `listingId` segue respondendo `400`.
-- **Quem recebe é o dono do token.** Sem anúncio não há slug dizendo de quem é a lead, então ela é entregue à conta do token usado na chamada. Um token é de uma conta só: para entregar a outra imobiliária ou corretor, use o token dela.
+- **Quem recebe é o dono do token**, como em toda lead. Sem anúncio não há slug para conferir, só isso muda.
 - **O restante é igual à lead com imóvel:** entra no CRM do responsável, dispara o aviso por WhatsApp e e-mail e o webhook [`lead:create`](/versions/unstable/webhooks/lead) — que chega com `property: null`.
 - **`transactionType` continua obrigatório.** É ele que decide o funil do CRM em que o cliente entra: `SELL` no de compradores, `RENT` no de locatários.
 - Como não há anúncio para dar contexto ao corretor, aproveite o campo `message` para resumir o atendimento.
