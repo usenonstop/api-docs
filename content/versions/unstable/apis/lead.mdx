@@ -6,7 +6,9 @@ Essa rota recebe um lead e dispara a notificação via whatsapp para o responsá
 
 ``` ts filename="Lead.ts" copy
 export interface Lead {
-  listingId: string; //formato [slug-do-corretor]#[base36Id-do-imóvel]
+  // formato [slug-do-corretor]#[base36Id-do-imóvel]
+  // null = lead sem imóvel (veja "Lead sem imóvel" abaixo)
+  listingId: string | null;
   origin: LeadOrigin;
   name: string | null;
   phone: string | null;
@@ -48,5 +50,28 @@ export async function createLead(lead: Lead) {
   );
   if (response.ok) return (await response.json()) as string;
   return null;
+}
+```
+
+## Lead sem imóvel
+
+Nem todo atendimento chega a um anúncio: o cliente pede para falar com uma pessoa, tira uma dúvida geral ou encerra a conversa antes de citar um imóvel. Para esses casos envie `listingId: null`.
+
+- **O campo continua obrigatório.** Lead sem imóvel é `listingId: null`, explícito. Corpo sem o campo `listingId` segue respondendo `400`.
+- **Quem recebe é o dono do token.** Sem anúncio não há slug dizendo de quem é a lead, então ela é entregue à conta do token usado na chamada. Um token é de uma conta só: para entregar a outra imobiliária ou corretor, use o token dela.
+- **O restante é igual à lead com imóvel:** entra no CRM do responsável, dispara o aviso por WhatsApp e e-mail e o webhook [`lead:create`](/versions/unstable/webhooks/lead) — que chega com `property: null`.
+- **`transactionType` continua obrigatório.** É ele que decide o funil do CRM em que o cliente entra: `SELL` no de compradores, `RENT` no de locatários.
+- Como não há anúncio para dar contexto ao corretor, aproveite o campo `message` para resumir o atendimento.
+
+``` json filename="lead-sem-imovel.json" copy
+{
+  "listingId": null,
+  "origin": "WHATSAPP",
+  "name": "Maria Souza",
+  "phone": null,
+  "whatsapp": "+5511999998888",
+  "email": null,
+  "message": "Pediu para falar com um corretor. Procura 3 dormitórios em Pinheiros, até R$ 2 milhões.",
+  "transactionType": "SELL"
 }
 ```
