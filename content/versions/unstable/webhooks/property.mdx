@@ -13,10 +13,14 @@ interface CreatePublicationWebhook {
 interface DeletePublicationWebhook {
   event: "publication:delete";
   propertyId: string;
+  //o mesmo código curto que aparece em `property.base36Id`, para quem indexa por ele
+  base36Id: string;
   userSlug: string;
 }
 
-//é enviado toda vez que o ocorre a atualização de algum dos imóveis
+//é enviado toda vez que um imóvel QUE O CORRETOR PUBLICOU NO SITE DELE é atualizado.
+//imóvel que ele anuncia só em portal não gera este evento: quem apresenta um imóvel
+//ao seu site é sempre o publication:create
 interface UpdatePropertyWebhook {
   event: "property:update";
   property: Property;
