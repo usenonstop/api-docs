@@ -1,0 +1,71 @@
+import { Callout } from 'nextra/components'
+
+# Configuração
+
+Os pixels e tags do site são cadastrados no painel, em **Site → Pixel**
+([usenonstop.com/site?editar=pixel](https://www.usenonstop.com/site?editar=pixel)).
+Campo vazio = a plataforma não é carregada no site.
+
+Todos os campos aceitam **o ID ou o código inteiro** que a plataforma entrega: ao
+colar o snippet, o painel extrai o ID. Formato inválido é recusado antes de salvar,
+com o aviso no próprio campo.
+
+## Campos
+
+| Campo | Formato | Exemplo | Ao colar o código, usa |
+| --- | --- | --- | --- |
+| Meta pixel ID | 15 ou 16 dígitos | `123456789012345` | o ID do `fbq('init', …)` ou o `id=` da imagem do `<noscript>` |
+| Taboola pixel ID | só dígitos | `1234567` | o ID de `/unip/<id>/tfa.js` ou o `id:` do `_tfa.push` |
+| Google analytics ID | ID da tag do Google | `G-AB12CD34EF` | o `G-…` (ou `AW-…`, `GT-…`, `UA-…`) do `gtag/js?id=` ou do `config` |
+| SprintHub instância | letras, números e hífen | `minhaimobiliaria` | o subdomínio de `<instância>.sprinthub.app` ou o `iname=` |
+
+### Google Ads
+
+| Campo | Formato | Exemplo |
+| --- | --- | --- |
+| Tag (AW-…) | `AW-` + dígitos | `AW-123456789` |
+| WhatsApp | `AW-…/rótulo` | `AW-123456789/AbCdEfGhIjKlMnOp` |
+| E-mail | `AW-…/rótulo` | `AW-123456789/QrStUvWxYz123456` |
+| Telefone | `AW-…/rótulo` | `AW-123456789/Ab1Cd2Ef3Gh4Ij5K` |
+| Cadastro de e-mail | `AW-…/rótulo` | `AW-123456789/LmNoPqRsTuVwXyZ0` |
+
+Cada conversão é o `send_to` de uma ação de conversão do Google Ads: a tag da
+conta, uma barra e o rótulo da ação. Colando o snippet do evento
+(`gtag('event', 'conversion', {'send_to': '…'})`), o painel extrai o `send_to`.
+
+Se você colar **só o rótulo**, o painel completa com a tag ao sair do campo
+(`AbCdEfGhIjKlMnOp` vira `AW-123456789/AbCdEfGhIjKlMnOp`) — a tela de
+"Gerenciador de Tags" do Google Ads mostra o ID e o rótulo separados, e é comum
+copiar só o rótulo.
+
+Onde achar a tag e os rótulos, e o que cada conversão dispara:
+[Google Ads](/marketing/google-ads).
+
+<Callout type="info">
+  O campo do Google Analytics também aceita a tag do Google Ads (`AW-…`): antes de
+  existir a seção Google Ads, era o único campo do Google, e o site segue
+  carregando a tag de quem a cadastrou ali. Prefira movê-la para **Google Ads →
+  Tag** — o resultado no site é o mesmo, e o painel fica claro sobre o que é
+  Analytics e o que é Ads.
+</Callout>
+
+## Uma tag do Google só
+
+O Google Analytics e o Google Ads usam a mesma biblioteca (`gtag.js`). O site a
+carrega **uma vez** e faz um `config` por conta: o ID do Analytics, a tag do Ads e
+a conta de cada conversão cadastrada. ID repetido entra uma vez só — cadastrar o
+mesmo `AW-…` em dois lugares não duplica nada.
+
+## Depois de salvar
+
+O site leva **até 10 minutos** para carregar a configuração nova (5 minutos de
+cache do pixel, mais 5 da página). Para conferir, ver
+[Como conferir](/marketing#como-conferir).
+
+<Callout type="warning">
+  **Snippet colado no campo da Meta, antes de 05/10/2026.** Até essa data, o campo
+  "Meta pixel ID" apagava tudo o que não era dígito: quem colava o código inteiro
+  ficava com um número de ~40 dígitos, e o pixel parava de receber eventos sem erro
+  aparente. Os cadastros afetados foram corrigidos. Se o seu pixel ficou sem
+  eventos nesse período, confira o campo — ele deve ter 15 ou 16 dígitos.
+</Callout>

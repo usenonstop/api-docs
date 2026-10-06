@@ -1,0 +1,73 @@
+import { Callout } from 'nextra/components'
+
+# Meta
+
+O Pixel da Meta (Facebook e Instagram) é cadastrado em **Site → Pixel → Meta pixel
+ID** ([usenonstop.com/site?editar=pixel](https://www.usenonstop.com/site?editar=pixel)):
+o ID de 15 ou 16 dígitos, ou o código inteiro do pixel — o painel extrai o ID.
+
+## Pixel
+
+Em todas as páginas:
+
+```js copy
+fbq('init', '123456789012345')
+fbq('track', 'PageView')
+```
+
+## Eventos de contato
+
+São eventos **personalizados** (`trackCustom`):
+
+| Evento | Quando |
+| --- | --- |
+| `ClickWhatsApp` | clique em qualquer botão de WhatsApp do site |
+| `ClickEmail` | clique em qualquer link de e-mail |
+| `ClickPhone` | clique em qualquer link de telefone |
+| `NewsletterSignup` | inscrição concluída no formulário do rodapé |
+
+```js copy
+fbq('trackCustom', 'ClickWhatsApp', {
+  content_category: 'engagement',
+  property_id: 'AB1C2', // código do imóvel, só na página do imóvel
+})
+```
+
+`NewsletterSignup` não leva `property_id`. Onde cada clique acontece e as regras
+(contato não cadastrado, cliques repetidos) estão em
+[Eventos](/marketing/eventos#contato).
+
+### Otimizar campanha por contato
+
+Evento personalizado não aparece como meta de otimização por conta própria. No
+Gerenciador de Eventos, crie uma **conversão personalizada** a partir dele (por
+exemplo, `ClickWhatsApp`) e escolha a categoria que corresponde ao objetivo; a
+campanha passa a poder otimizar por ela.
+
+## Código de atendimento no WhatsApp
+
+Com o pixel cadastrado, os botões de WhatsApp do site acrescentam um código de
+5 caracteres ao fim da mensagem:
+
+```text
+Olá, vi o imóvel da Rua Exemplo, código: AB1C2 no seu site, gostaria de mais informações. [#7K2QD]
+```
+
+No clique, o site registra na nonStop o código junto com o imóvel e a origem do
+visitante (campanha, `fbclid` e cookies do pixel — ver
+[Atribuição](/marketing/atribuicao)). Quando a mensagem chega, o código liga a
+conversa ao clique:
+
+- **Automático**, com o WhatsApp do corretor conectado à nonStop pela API oficial.
+- **Manual**, no CRM: botão **Vincular WhatsApp**, digitando o código que veio na
+  mensagem, o nome e o WhatsApp do cliente.
+
+O resultado é o mesmo nos dois casos: o contato entra no CRM com o imóvel e a
+origem do anúncio. Os botões de comprador (página do imóvel, botão flutuante,
+página "Sobre") geram uma lead; o "Venda seu imóvel" do rodapé gera um cliente
+proprietário.
+
+<Callout type="info">
+  Sem o pixel da Meta cadastrado, o botão de WhatsApp funciona normalmente, só que
+  sem o código: não há origem de anúncio para ligar à conversa.
+</Callout>

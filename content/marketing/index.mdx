@@ -1,0 +1,62 @@
+import { Callout } from 'nextra/components'
+
+# Marketing
+
+O site da nonStop (o site da imobiliária ou do corretor, publicado no domínio
+próprio dele) já sai preparado para campanhas: carrega as tags das plataformas de
+anúncio que o anunciante cadastrar e dispara eventos nos momentos que importam —
+a visita, o contato e o imóvel visto.
+
+Esta seção descreve exatamente o que o site envia, para quem monta campanhas,
+públicos e conversões em cima dele.
+
+<Callout type="info">
+  Vale para o site da nonStop. Se você usa a [API](/versions/unstable/apis/site)
+  para alimentar um site próprio, os pixels e eventos são do seu site — nada desta
+  seção é injetado nele.
+</Callout>
+
+## Plataformas
+
+| Plataforma | O que o site carrega | Detalhes |
+| --- | --- | --- |
+| Meta (Facebook e Instagram) | Pixel da Meta, com `PageView` e eventos de contato | [Meta](/marketing/meta-ads) |
+| Google Analytics 4 | Tag do Google (`gtag.js`) com o ID `G-…` e eventos de contato | [Eventos](/marketing/eventos) |
+| Google Ads | A mesma `gtag.js` com a tag `AW-…`, conversões e remarketing dinâmico | [Google Ads](/marketing/google-ads) |
+| Taboola | Pixel do Taboola, com `page_view` | [Eventos](/marketing/eventos) |
+| SprintHub | Script da instância do SprintHub | [Configuração](/marketing/configuracao) |
+
+## O que é medido
+
+- **Visita** — cada plataforma recebe a sua visualização de página padrão.
+- **Contato** — cliques em WhatsApp, e-mail e telefone, em qualquer página do site.
+- **Cadastro de e-mail** — inscrição concluída no formulário "Inscreva-se e receba
+  novidades".
+- **Imóvel visto** — na página do imóvel, o `view_item` do remarketing dinâmico do
+  Google Ads.
+- **Origem do visitante** — UTMs e identificadores de clique dos anúncios, guardados
+  para atribuir o contato à campanha. Ver [Atribuição](/marketing/atribuicao).
+
+A lista completa, com nomes e parâmetros, está em [Eventos](/marketing/eventos).
+
+## Onde configurar
+
+No painel da nonStop, em **Site → Pixel**
+([usenonstop.com/site?editar=pixel](https://www.usenonstop.com/site?editar=pixel)).
+Cada campo aceita o ID ou o código inteiro que a plataforma entrega — o painel
+extrai o ID. Ver [Configuração](/marketing/configuracao).
+
+<Callout type="warning">
+  Depois de salvar, o site leva **até 10 minutos** para carregar a configuração
+  nova: o pixel fica em cache por 5 minutos e a página, por mais 5.
+</Callout>
+
+## Como conferir
+
+- **Google (Analytics e Ads):** [Tag Assistant](https://tagassistant.google.com) —
+  abra o site por ele e veja a tag, os `config` e os eventos de cada clique.
+- **Meta:** extensão [Meta Ads Data Advisor](https://chromewebstore.google.com/detail/fdgfkebogiimcoedlicjlajpkdmockpc)
+  (a antiga Meta Pixel Helper) ou a aba **Testar eventos** do Gerenciador de
+  Eventos.
+- **Painéis das plataformas:** conversões e eventos costumam levar algumas horas
+  para aparecer nos relatórios.

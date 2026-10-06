@@ -1,0 +1,95 @@
+import { Callout } from 'nextra/components'
+
+# Eventos
+
+Tudo o que o site envia às plataformas cadastradas em **Site → Pixel**. Plataforma
+sem cadastro não recebe nada.
+
+## Visualização de página
+
+Ao carregar o site:
+
+| Plataforma | O que sai |
+| --- | --- |
+| Meta | `fbq('track', 'PageView')` |
+| Google Analytics | `gtag('config', 'G-…', { page_path })` — o GA4 registra a visualização de página |
+| Google Ads | `gtag('config', 'AW-…')` — visita para as listas de remarketing |
+| Taboola | `_tfa.push({ notify: 'event', name: 'page_view', id })` |
+| SprintHub | o script da instância (`shubfull.min.js`), que mede por conta própria |
+
+Navegações internas (que não recarregam a página) ficam por conta do rastreamento
+automático de cada plataforma.
+
+## Contato
+
+Cada contato dispara, ao mesmo tempo, o evento do Google, o evento personalizado
+da Meta e — se a conversão estiver cadastrada — a conversão do Google Ads:
+
+| Ação | Google (Analytics e Ads) | Meta (`trackCustom`) | Conversão do Google Ads |
+| --- | --- | --- | --- |
+| Clique no WhatsApp | `click_whatsapp` | `ClickWhatsApp` | campo **WhatsApp** |
+| Clique no e-mail | `click_email` | `ClickEmail` | campo **E-mail** |
+| Clique no telefone | `click_phone` | `ClickPhone` | campo **Telefone** |
+| Cadastro de e-mail concluído | `newsletter_signup` | `NewsletterSignup` | campo **Cadastro de e-mail** |
+
+### Parâmetros
+
+```js filename="Google" copy
+gtag('event', 'click_whatsapp', {
+  event_category: 'engagement',
+  event_label: 'whatsapp_button', // onde foi o clique (tabela abaixo)
+  property_id: 'AB1C2', // código do imóvel, só na página do imóvel
+})
+```
+
+```js filename="Meta" copy
+fbq('trackCustom', 'ClickWhatsApp', {
+  content_category: 'engagement',
+  property_id: 'AB1C2', // código do imóvel, só na página do imóvel
+})
+```
+
+```js filename="Google Ads" copy
+// só quando a conversão está cadastrada no painel
+gtag('event', 'conversion', { send_to: 'AW-123456789/AbCdEfGhIjKlMnOp' })
+```
+
+`click_email`, `click_phone` e `newsletter_signup` seguem o mesmo formato, com
+`event_label` fixo: `email_button`, `phone_button` e `newsletter_form`. O
+`newsletter_signup` não leva `property_id`.
+
+### Onde cada clique acontece
+
+| Lugar | Evento | `event_label` | `property_id` |
+| --- | --- | --- | --- |
+| Página do imóvel — botões de contato (inclusive a barra fixa no celular) | WhatsApp, e-mail e telefone | `whatsapp_button`, `email_button`, `phone_button` | código do imóvel |
+| Botão flutuante de WhatsApp | WhatsApp | `whatsapp_widget` | — |
+| Página "Sobre" — WhatsApp | WhatsApp | `about_advise` | — |
+| Página "Sobre" — e-mail e telefone | e-mail e telefone | `email_button`, `phone_button` | — |
+| Rodapé — "Venda seu imóvel" | WhatsApp | `footer_sell` | — |
+| Rodapé — "Inscreva-se e receba novidades" | cadastro de e-mail | `newsletter_form` | — |
+
+O `event_label` separa, por exemplo, quem quer comprar (`whatsapp_button`,
+`whatsapp_widget`) de quem quer vender (`footer_sell`) — útil para não otimizar
+campanha de compra com contato de proprietário.
+
+### Regras
+
+- **Sem contato cadastrado, sem evento.** Botão sem WhatsApp, e-mail ou telefone
+  cadastrado no painel não leva a lugar nenhum, e o clique nele não dispara nada.
+- **Clique repetido não conta duas vezes.** Na página do imóvel, os botões de
+  WhatsApp e e-mail ignoram novos cliques por 10 segundos.
+- **Cadastro de e-mail só no sucesso.** E-mail recusado pelo formulário não dispara
+  o `newsletter_signup`.
+
+<Callout type="info">
+  Sem a conversão cadastrada, o `click_whatsapp` (e os demais) ainda chega à conta
+  do Google Ads pela tag, mas **não conta como conversão**. Para virar conversão,
+  cadastre o `send_to` da ação no painel — ver [Google Ads](/marketing/google-ads).
+</Callout>
+
+## Imóvel visto
+
+Na página do imóvel, com uma conta do Google Ads cadastrada, o site envia o
+`view_item` do remarketing dinâmico, com o preço e o código do imóvel. Formato e
+regras em [Google Ads → Remarketing dinâmico](/marketing/google-ads#remarketing-dinâmico).

@@ -1,0 +1,121 @@
+import { Callout } from 'nextra/components'
+
+# Google Ads
+
+O site carrega a tag do Google Ads em todas as páginas, dispara as conversões de
+contato que o anunciante cadastrar e envia o `view_item` do remarketing dinâmico
+na página de cada imóvel. Tudo é configurado em **Site → Pixel → Google Ads**
+([usenonstop.com/site?editar=pixel](https://www.usenonstop.com/site?editar=pixel)).
+
+## Tag
+
+O ID da conta, no formato `AW-123456789`. Com ele preenchido, toda página do site
+faz:
+
+```js copy
+gtag('config', 'AW-123456789')
+```
+
+Isso alimenta as listas de remarketing e é a conta que recebe o `view_item`.
+
+## Conversões
+
+Uma conversão por tipo de contato. Em cada uma vai o `send_to` da ação de
+conversão: a tag da conta, uma barra e o rótulo.
+
+| Campo no painel | Dispara quando |
+| --- | --- |
+| WhatsApp | clique em qualquer botão de WhatsApp do site |
+| E-mail | clique em qualquer link de e-mail |
+| Telefone | clique em qualquer link de telefone |
+| Cadastro de e-mail | inscrição concluída no formulário do rodapé |
+
+```js copy
+gtag('event', 'conversion', { send_to: 'AW-123456789/AbCdEfGhIjKlMnOp' })
+```
+
+A conversão sai junto com o evento genérico (`click_whatsapp` e afins). Sem o
+`send_to` cadastrado, o evento genérico ainda chega à conta, mas não conta como
+conversão. Os detalhes de cada clique — onde acontece, parâmetros, regras — estão
+em [Eventos](/marketing/eventos#contato).
+
+### Onde achar a tag e os rótulos
+
+No Google Ads, crie uma ação de conversão de **site** para cada contato que quiser
+medir, configurada manualmente com código. Na configuração da tag da ação:
+
+- **Instalar a tag você mesmo** mostra o snippet do evento, com o `send_to`
+  completo (`'send_to': 'AW-123456789/AbCdEfGhIjKlMnOp'`). Pode colar o snippet
+  inteiro no campo: o painel extrai o `send_to`.
+- **Usar o Gerenciador de Tags do Google** mostra o **ID de conversão** (os dígitos
+  do `AW-`) e o **rótulo** separados. Preencha a Tag primeiro e cole só o rótulo
+  no campo da conversão: o painel completa com a tag.
+
+Não é preciso instalar nada no site: a tag, os `config` e os eventos são
+responsabilidade da nonStop.
+
+<Callout type="info">
+  A conversão pode ser de outra conta do Google Ads: o site faz um `config` para a
+  conta de cada conversão cadastrada, e não só para a Tag.
+</Callout>
+
+## Remarketing dinâmico
+
+Na página de cada imóvel, uma vez por imóvel visitado:
+
+```js copy
+gtag('event', 'view_item', {
+  send_to: 'AW-123456789',
+  value: 850000,
+  items: [{ id: 'AB1C2', google_business_vertical: 'real_estate' }],
+})
+```
+
+| Parâmetro | Valor |
+| --- | --- |
+| `send_to` | a Tag cadastrada (ver abaixo, quando ela está vazia) |
+| `value` | o preço que a página está mostrando: o de venda, ou o de locação quando o visitante está vendo o imóvel para alugar. Sem preço, o parâmetro não vai |
+| `items[].id` | o código do imóvel no site — o mesmo da página e do fim da URL (`…-id-AB1C2`) |
+| `items[].google_business_vertical` | sempre `real_estate` |
+
+**O feed precisa usar o mesmo ID.** Para os anúncios dinâmicos mostrarem o imóvel
+visto, o feed de imóveis do Google Ads (dados comerciais do tipo **Imóveis**) tem
+que ter o código do site na coluna **Listing ID**.
+
+A conta que recebe o `view_item` é a **Tag**. Se ela estiver vazia, o site usa o
+`AW-…` cadastrado no campo do Google Analytics; na falta dos dois, a conta da
+primeira conversão cadastrada. Sem nenhuma conta do Google Ads, o `view_item` não
+sai.
+
+## Pedido típico de agência
+
+Agências costumam mandar uma lista assim. É como cada item entra no painel:
+
+| Pedido | No painel |
+| --- | --- |
+| "Tag do Google (`gtag.js`) com o ID `AW-…` em todas as páginas" | **Tag** |
+| "Conversão no clique do WhatsApp: `send_to: 'AW-…/…'`" | **WhatsApp** |
+| "Conversão no clique de e-mail" | **E-mail** |
+| "Conversão no clique de telefone" | **Telefone** |
+| "Remarketing dinâmico na página de cada imóvel (`view_item`)" | automático com a Tag preenchida |
+| "Conversão no envio do formulário de contato" | não se aplica — ver abaixo |
+
+<Callout type="warning">
+  **O site não tem formulário de contato.** O contato é por WhatsApp, e-mail e
+  telefone, e cada um já tem a sua conversão. O único formulário é o cadastro de
+  e-mail do rodapé, que é inscrição em novidades, não pedido de contato: usar ali
+  a conversão de "formulário de contato" contaria inscrições como leads e
+  distorceria a otimização da campanha.
+</Callout>
+
+## Como conferir
+
+- Abra o site pelo [Tag Assistant](https://tagassistant.google.com): ele mostra a
+  tag `AW-…`, o `view_item` na página do imóvel e a `conversion` em cada clique de
+  contato.
+- Lembre que o site leva até 10 minutos para carregar uma configuração nova.
+- No Google Ads, a ação aparece como sem conversões recentes até o primeiro
+  evento chegar, e conversões costumam levar algumas horas para aparecer nos
+  relatórios.
+- Clicar para testar **gera conversão de verdade** na conta do anunciante — o
+  clique é o evento. Combine com o anunciante antes de testar no site no ar.

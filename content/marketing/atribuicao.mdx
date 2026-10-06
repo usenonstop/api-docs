@@ -1,0 +1,44 @@
+import { Callout } from 'nextra/components'
+
+# Atribuição
+
+O site guarda de onde o visitante veio — a campanha e os identificadores de clique
+dos anúncios — num cookie próprio, `ns_attr`, para que essa origem chegue até o
+contato mesmo que o visitante navegue por várias páginas antes de clicar.
+
+## O que é guardado
+
+| Campo | Vem de | Regra |
+| --- | --- | --- |
+| `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` | parâmetros da URL | primeiro toque |
+| `gclid`, `gbraid`, `wbraid` | parâmetros da URL (clique no Google Ads) | primeiro toque |
+| `fbclid` | parâmetro da URL (clique na Meta) | último valor |
+| `_fbp`, `_fbc` | cookies do Pixel da Meta | último valor |
+| página de origem (`referrer`) | o site de onde o visitante chegou | primeiro toque |
+| página de entrada | a URL da primeira página vista | primeiro toque |
+
+- **Primeiro toque**: vale o valor da primeira visita que o trouxe — a campanha que
+  trouxe o visitante não é trocada pela navegação seguinte.
+- **Último valor**: o mais recente substitui o anterior, porque a Meta renova os
+  próprios cookies.
+- Parâmetro presente e vazio (`?wbraid=`) conta como ausente.
+
+O cookie é first-party (do domínio do site), vale por **30 dias** e o prazo
+recomeça a cada visita. Sem nenhum dado de origem, ele não é gravado.
+
+<Callout type="info">
+  Use UTMs nos links das campanhas. `gclid`/`gbraid`/`wbraid` e `fbclid` chegam
+  sozinhos quando a marcação automática das plataformas está ligada, mas são as UTMs
+  que dizem, em texto legível, de qual campanha veio o contato.
+</Callout>
+
+## Para onde vai
+
+Hoje a origem sai do navegador junto com o **código de atendimento do WhatsApp**
+(exige o Pixel da Meta cadastrado — ver [Meta](/marketing/meta-ads#código-de-atendimento-no-whatsapp)):
+no clique, o site registra na nonStop o código, o imóvel e a origem; quando a
+conversa é vinculada, o contato entra no CRM com essa origem.
+
+Os eventos enviados direto às plataformas (`click_whatsapp`, `ClickWhatsApp` e
+afins) não dependem deste cookie: cada plataforma atribui os próprios eventos pela
+sua tag.
