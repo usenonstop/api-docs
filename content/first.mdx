@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 ## Plano
  
   Para utilizar as integrações da nonStop você vai precisar de um plano ativo. Caso ainda não tenha um entre em contato por
@@ -9,8 +11,26 @@
 ## Token
 
 Para obter o token da nonStop vá para [https://www.usenonstop.com/configuracoes?tab=integration](https://www.usenonstop.com/configuracoes?tab=integration). Na seção **Integrações** você irá encontrá-lo. Ele será
-utilizado para identificar o solicitante e a validade de seu plano. Caso você suspeite que seu token esteja comprometido você pode subustituí-lo apertando o botão de refresh no canto
-superior direito.
+utilizado para identificar o solicitante e a validade de seu plano.
+
+Cada conta tem **um** token por vez, e ele dá o mesmo acesso em qualquer integração:
+use o mesmo no site, no CRM e onde mais precisar. Guarde-o no servidor (variável de
+ambiente), nunca em código que roda no navegador.
+
+### Renovar o token
+
+Se você suspeitar que o token foi comprometido, gere um novo pelo botão de renovar, no
+canto superior direito do campo. **O token anterior deixa de funcionar na hora**, em
+todas as integrações que o usam: atualize cada uma delas com o novo. Uma chamada com o
+token antigo responde `400` com `token revogado: use o token atual da conta (Configurações → Integrações)`.
+
+<Callout type="warning">
+  **Até 13/10/2026, renovar não revogava o token anterior.** Todo token já emitido
+  para a conta continuava valendo, inclusive depois de renovado. Se você renovou um
+  token comprometido antes dessa data, ele só deixou de funcionar agora. E se a sua
+  integração passou a receber `token revogado`, ela usava um token antigo: troque
+  pelo que aparece hoje em **Configurações → Integrações**.
+</Callout>
 
 ### Um token = uma conta
 
