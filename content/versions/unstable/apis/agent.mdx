@@ -103,13 +103,16 @@ export async function getAgent(slug: string) {
 ## /unstable/agentes/portfolio/[slug]
 **Method: <span style={{color: "green"}}>GET</span>**
 
-Essa rota retorna a lista paginada de imóveis do portfólio do agente
-identificado pelo slug. Permite separar entre imóveis ativos (selecionados no
-[painel de integrações](https://www.usenonstop.com/integracao) do site) e
-imóveis vendidos pelo agente.
+Essa rota retorna a lista paginada de imóveis do portfólio de um agente da
+imobiliária autenticada, identificado pelo slug. Permite separar entre imóveis
+ativos (selecionados no [painel de integrações](https://www.usenonstop.com/integracao)
+do site) e imóveis vendidos pelo agente.
 
-O usuário autenticado precisa ter um plano ativo e CPF (caso AGENTE) ou CNPJ
-(caso pessoa jurídica) cadastrado.
+O slug precisa ser o de um agente vinculado à imobiliária autenticada (a mesma
+regra do `/agentes/[slug]`) ou o da própria imobiliária, que traz o portfólio
+de todos os agentes dela. Qualquer outro slug, inclusive inexistente, responde
+`404` com `{ "error": "agent not found" }`. O usuário autenticado precisa ter um
+plano ativo.
 
 Ela aceita as seguintes Query Strings:
 
@@ -121,10 +124,22 @@ sold: boolean
 
 Os parâmetros **currPage** e **perPage** são obrigatórios e definem a paginação.
 
-O parâmetro **sold** é obrigatório. Quando **true** retorna os imóveis
-vendidos pelo agente (ordenados pelo valor de venda, decrescente). Quando
-**false** retorna os imóveis ativos do portfólio (ordenados pela data de
-criação, decrescente).
+O parâmetro **sold** é obrigatório. Quando **false** retorna os imóveis ativos
+do agente que estão no site da imobiliária: exclusivos, disponíveis para venda
+ou locação (sem negociação em andamento), com ao menos uma foto e sem preço ou
+endereço ocultos (ordenados pela data de criação, decrescente). Quando **true**
+retorna os imóveis vendidos creditados ao agente (ordenados pelo valor de
+venda, decrescente): os negócios fechados em que ele aparece como corretor,
+imobiliária, gestor compartilhado ou parceiro, e aqueles em que ele está entre
+os participantes da comissão, identificado pelo CPF (agente) ou CNPJ (pessoa
+jurídica) cadastrado na conta. O documento não é obrigatório: sem ele, a lista
+traz só os negócios do primeiro grupo.
+
+Nem sempre foi assim. Até 18/10/2026 a rota ignorava o slug: qualquer valor,
+mesmo inexistente, devolvia o portfólio da imobiliária autenticada inteira, e a
+conta autenticada sem CPF ou CNPJ cadastrado recebia `400` com
+`user has no document`. Se a sua integração montava a visão por agente com esta
+rota, os números mudaram: agora cada slug traz só o portfólio daquele agente.
 
 Retorna um objeto com a lista de [CardProperty](/types/property#cardproperty)
 e o total de resultados.
