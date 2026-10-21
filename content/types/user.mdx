@@ -115,11 +115,19 @@ export interface AgentsPageAgent {
   whatsapp: string | null;
   actuationAreas: ActuationArea[];
   name: string;
-  email: string;
+  email: string; // e-mail profissional; o de login só quando não há profissional
   vgv: number;
   slug: string;
 }
 ```
+
+### Mudança no `AgentsPageAgent`
+
+Desde 21/10/2026, `email` é o **e-mail profissional** do corretor — o campo
+"Email profissional" do perfil na nonStop. O e-mail de login da conta só aparece
+para quem não preencheu o profissional. A busca (`search`) de
+[/unstable/agentes/todos](/versions/unstable/apis/agent#unstableagentestodos)
+casa com esse mesmo e-mail, e não mais com o de login.
 
 ## UserProfile
 Perfil completo do usuário. É uma união discriminada pelo campo `type`: agentes
