@@ -1,6 +1,8 @@
 ## Webhooks
 Disponibilizamos os seguintes webhooks para leads. Se o corretor fizer parte de uma imobiliária os leads recebidos por ele ativarão os webhooks cadastrados no perfil da imobiliária apenas. Cadastro, autenticação e regras de entrega estão em [Configuração](/versions/unstable/webhooks/configuracao).
 
+Com o [atendimento por IA](/versions/unstable/webhooks/ia) ligado na imobiliária, estes webhooks são o endpoint da IA: recebem só as leads que vão para ela.
+
 ``` ts filename="type.d.ts" copy
 //é enviado toda vez que o corretor recebe um lead:
 interface CreateLeadWebhook {
@@ -27,6 +29,9 @@ export interface Lead {
   client: Client;
   transactionType: "RENT" | "SELL";
   message: string | null;
+  // `true` = digitada por alguém no CRM ou em /leads; `false` = chegou de fora
+  // (portal, API de leads, formulário da Meta).
+  manual: boolean;
   archived: boolean;
   createdAt: Date;
 }

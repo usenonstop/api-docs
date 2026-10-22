@@ -189,7 +189,9 @@ estado, use a [API de imóveis](/versions/unstable/apis/property).
   ignore.
 - **`lead:create`**: a conta responsável pela lead. Se ela for de corretor vinculado
   a uma imobiliária, o evento vai **só** para os webhooks da imobiliária, e o
-  `userSlug` diz qual corretor recebeu.
+  `userSlug` diz qual corretor recebeu. Com o
+  [atendimento por IA](/versions/unstable/webhooks/ia) ligado, os webhooks de leads
+  da imobiliária recebem só as leads que vão para a IA.
 
 <Callout type="info">
   **Um endpoint para vários clientes.** Se você integra mais de uma conta, pode
@@ -205,4 +207,6 @@ estado, use a [API de imóveis](/versions/unstable/apis/property).
   `publication:create` e um `publication:delete`.
 - **Leads:** crie uma lead pela [API de leads](/versions/unstable/apis/lead). Ela
   gera um `lead:create`, mas é uma lead de verdade: entra no CRM da conta e avisa o
-  responsável por WhatsApp e e-mail.
+  responsável por WhatsApp e e-mail. Com o
+  [atendimento por IA](/versions/unstable/webhooks/ia) ligado, a lead da API não gera
+  o evento: teste com o serviço desligado.

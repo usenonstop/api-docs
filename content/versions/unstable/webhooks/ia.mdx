@@ -1,0 +1,78 @@
+import { Callout } from 'nextra/components'
+
+## Atendimento por IA
+
+Para empresas de IA que fazem o primeiro atendimento das leads de uma imobiliária. Com o
+serviço ligado, a lead de portal vai primeiro para a IA, e o corretor só a recebe quando a IA
+a devolve, já atendida.
+
+A IA não tem cadastro próprio: o endpoint dela é um webhook de leads da imobiliária. No painel
+da nonStop são três passos:
+
+1. **O endpoint:** a imobiliária cadastra a URL da IA, o token e a secret em
+   **Configurações → Webhooks → Webhooks de leads**, como qualquer
+   [webhook](/versions/unstable/webhooks/configuracao).
+2. **A imobiliária liga o serviço:** **Configurações → Imobiliária → Atendimento por IA**.
+   No mesmo bloco ela decide pelas leads que ficam com a conta dela.
+3. **Cada corretor decide pelas próprias leads:** **Configurações → Notificações →
+   Atendimento por IA**.
+
+<Callout type="info">
+  Com o serviço ligado, os webhooks de leads da imobiliária recebem **só** as leads que vão
+  para a IA. Nenhuma outra lead da conta chega a eles: nem a de corretor com a IA desligada,
+  nem a que a própria IA cria pela [API de leads](/versions/unstable/apis/lead), nem a que
+  ela devolve.
+</Callout>
+
+## O que a IA recebe
+
+Recebe a lead de portal (ZAP/Viva Real/OLX, ImovelWeb, Casa Mineira, Chaves na Mão e SP Imóvel)
+ou de formulário da Meta, quando o corretor que ficou com ela ligou a IA. O envio é o do
+webhook: corpo [`lead:create`](/versions/unstable/webhooks/lead), header
+`Authorization: Bearer <token>` e assinatura `X-Nonstop-Signature`
+([Configuração](/versions/unstable/webhooks/configuracao)).
+
+Não vão para a IA:
+
+- lead de corretor com a IA desligada, que segue direto para o WhatsApp dele;
+- lead criada pela [API de leads](/versions/unstable/apis/lead), inclusive a que a própria IA
+  cria;
+- lead que o corretor digita no CRM e lead que nasce de conversa no WhatsApp do site.
+
+Enquanto a IA atende, a lead não aparece para o corretor: não entra no CRM nem nas listas, e
+nenhum aviso sai.
+
+## Devolver a lead
+
+Terminado o atendimento, devolva a lead pela API, com o `lead.id` que chegou no envio e o resumo
+do atendimento:
+
+```http filename="requisição" copy
+POST /api/unstable/leads/devolver HTTP/1.1
+Host: www.usenonstop.com
+Content-Type: application/json
+Authorization: Bearer <token da API da imobiliária>
+
+{"leadId":"67d4e5f6a7b8c9d0e1f2a3b4","summary":"Cliente quer visitar no sábado de manhã. Aprovado no financiamento até R$ 900 mil."}
+```
+
+A lead vai para o **mesmo corretor**, sem rodízio novo. Ela entra no CRM dele, e o aviso de
+WhatsApp e e-mail sai marcado como atendido pela IA. Os webhooks de leads não recebem a lead de
+novo. O resumo vira a mensagem da lead, com o texto original do portal logo abaixo. Os detalhes
+da rota estão na [API de leads](/versions/unstable/apis/lead#unstableleadsdevolver).
+
+## Falhas
+
+- **A entrega à IA falhou** (status fora de `2xx`, mais de 5 segundos ou erro de conexão): a lead
+  vai na hora para o WhatsApp do corretor, como se a IA estivesse desligada, e **não** entra na
+  fila de reenvio. O resto é a regra dos
+  [webhooks](/versions/unstable/webhooks/configuracao#falhas-seguidas): a imobiliária recebe o
+  aviso de falha, e na 3ª falha seguida o endpoint sai da lista. Sem endpoint, as leads seguem
+  direto para os corretores até ele ser cadastrado de novo.
+- **O serviço foi desligado, ou o corretor desligou a IA:** as leads que estavam com a IA vão para
+  os corretores na hora.
+
+Nos dois casos, se a IA devolver a lead depois, a resposta é `200` e ninguém é avisado de novo.
+
+Com mais de um webhook de leads cadastrado, a lead vai para todos, e fica com a IA se pelo menos
+um aceitar.

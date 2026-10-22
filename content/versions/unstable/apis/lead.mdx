@@ -77,3 +77,46 @@ Nem todo atendimento chega a um anúncio: o cliente pede para falar com uma pess
   "transactionType": "SELL"
 }
 ```
+
+## /unstable/leads/devolver
+**Method: POST**
+
+Rota da IA do [atendimento por IA](/versions/unstable/webhooks/ia): devolve a lead que a IA recebeu, já atendida. Só aqui a lead chega ao corretor (CRM, WhatsApp e e-mail), sem criar outra lead e sem passar pelo rodízio de novo. Os webhooks de leads não recebem a lead de novo.
+
+Use o token da API da imobiliária que ligou o serviço. Lead de outra imobiliária responde `404`, como lead inexistente.
+
+``` ts filename="ReturnedLead.ts" copy
+export interface ReturnedLead {
+  // o `lead.id` que chegou no envio para a IA
+  leadId: string;
+  // resumo do atendimento, até 4.000 caracteres. Vira a mensagem da lead,
+  // com o texto original do portal logo abaixo.
+  summary: string;
+}
+```
+
+| Resposta | Quando |
+| --- | --- |
+| `200` `{"ok":true}` | A lead foi entregue ao corretor. |
+| `200` `{"ok":true,"message":"lead já tinha sido entregue ao corretor"}` | A devolução foi repetida, ou a lead já tinha ido para o corretor porque a entrega à IA falhou ou o serviço foi desligado. O resumo fica guardado e ninguém é avisado de novo. |
+| `400` | Corpo inválido ou token inválido. |
+| `404` | `leadId` desconhecido ou de outra imobiliária. |
+
+Como a resposta repetida também é `200`, dá para reenviar a devolução com segurança se a sua chamada cair no meio.
+
+``` ts filename="actions.ts" copy
+export async function returnLead(lead: ReturnedLead) {
+  const response = await fetch(
+    `https://www.usenonstop.com/api/unstable/leads/devolver`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.NONSTOP_TOKEN}`,
+      },
+      body: JSON.stringify(lead),
+    },
+  );
+  return response.ok;
+}
+```
