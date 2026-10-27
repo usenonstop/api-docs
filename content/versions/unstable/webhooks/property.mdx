@@ -74,6 +74,7 @@ export interface Property {
   };
   areas: Areas;
   yearOfConstruction: number | null;
+  renovation: Renovation | null;
   address: Address;
   description: string;
   features: PropertyFeature[];
@@ -261,6 +262,20 @@ export interface Areas {
   private: number | null;
   total: number | null;
   land: number | null;
+}
+```
+
+## Renovation
+A última reforma da unidade, informada pelo corretor; `null` quando não foi informada (desde 27/10/2026).
+``` ts filename="type.d.ts" copy
+export interface Renovation {
+  year: number;
+  scope:
+    | "PINTURA_REPAROS"
+    | "ACABAMENTOS"
+    | "COZINHA_BANHEIROS"
+    | "COMPLETA"
+    | "COMPLETA_PROJETO";
 }
 ```
 

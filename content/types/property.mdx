@@ -60,6 +60,17 @@ type Face = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
 
 type PropertyLayout = "DUPLEX" | "TRIPLEX";
 
+// A última reforma da unidade, informada pelo corretor (desde 27/10/2026).
+interface Renovation {
+  year: number;
+  scope:
+    | "PINTURA_REPAROS"
+    | "ACABAMENTOS"
+    | "COZINHA_BANHEIROS"
+    | "COMPLETA"
+    | "COMPLETA_PROJETO";
+}
+
 type Feature =
   | "ADEGA_CLIMATIZADA"
   | "AGUA_QUENTE"
@@ -327,6 +338,7 @@ export interface CommonFields {
   values: Values;
   areas: Areas;
   yearOfConstruction: number | null;
+  renovation: Renovation | null;
   condo: CondoEmbed | null
   address: Address;
   description: string;
