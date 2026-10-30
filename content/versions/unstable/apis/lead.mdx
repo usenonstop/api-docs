@@ -3,7 +3,9 @@
 
 Essa rota recebe um lead e dispara a notificação via whatsapp para o responsável
 
-O lead é sempre entregue à conta dona do token usado na chamada. O slug do `listingId` precisa ser o dessa conta — se for de outra, a resposta é `403` e nada é criado. Para enviar leads a outra imobiliária ou corretor, use o token dela.
+O lead é sempre entregue à conta dona do token usado na chamada. O slug do `listingId` precisa ser o dessa conta ou, com token de imobiliária, o de um corretor dela — aí o lead vai para a imobiliária, e as regras de distribuição dela decidem quem atende. Se for de outra conta, a resposta é `403` e nada é criado. Para enviar leads a outra imobiliária ou corretor, use o token dela.
+
+Nem sempre foi assim. Até 30/10/2026, token de imobiliária com o slug de um corretor dela também levava `403`.
 
 
 ``` ts filename="Lead.ts" copy
