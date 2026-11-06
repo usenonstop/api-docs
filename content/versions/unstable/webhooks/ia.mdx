@@ -40,26 +40,45 @@ Não vão para a IA:
 - lead que o corretor digita no CRM e lead que nasce de conversa no WhatsApp do site.
 
 Enquanto a IA atende, a lead não aparece para o corretor: não entra no CRM nem nas listas, e
-nenhum aviso sai.
+nenhum aviso sai. Isso dura até a IA devolver a lead ou até o [prazo](#prazo) de 6 horas.
 
 ## Devolver a lead
 
-Terminado o atendimento, devolva a lead pela API, com o `lead.id` que chegou no envio e o resumo
-do atendimento:
+Terminado o atendimento, devolva a lead pela mesma rota em que a IA cria leads, a
+[`/leads/criar`](/versions/unstable/apis/lead#lead-que-volta-da-ia), com o `lead.id` que chegou
+no envio no campo `originLeadId` e o resumo do atendimento no `message`:
 
 ```http filename="requisição" copy
-POST /api/unstable/leads/devolver HTTP/1.1
+POST /api/unstable/leads/criar HTTP/1.1
 Host: www.usenonstop.com
 Content-Type: application/json
 Authorization: Bearer <token da API da imobiliária>
 
-{"leadId":"67d4e5f6a7b8c9d0e1f2a3b4","summary":"Cliente quer visitar no sábado de manhã. Aprovado no financiamento até R$ 900 mil."}
+{"listingId":null,"originLeadId":"67d4e5f6a7b8c9d0e1f2a3b4","origin":"WHATSAPP","name":"Maria Souza","phone":null,"whatsapp":"+5511999998888","email":null,"message":"Cliente quer visitar no sábado de manhã. Aprovada no financiamento até R$ 900 mil.","transactionType":"SELL"}
 ```
 
-A lead vai para o **mesmo corretor**, sem rodízio novo. Ela entra no CRM dele, e o aviso de
-WhatsApp e e-mail sai marcado como atendido pela IA. Os webhooks de leads não recebem a lead de
-novo. O resumo vira a mensagem da lead, com o texto original do portal logo abaixo. Os detalhes
-da rota estão na [API de leads](/versions/unstable/apis/lead#unstableleadsdevolver).
+A lead vai para o **mesmo corretor**, sem rodízio novo e com a origem do portal preservada. Ela
+entra no CRM dele, e o aviso de WhatsApp e e-mail sai marcado como atendido pela IA. Os webhooks
+de leads não recebem a lead de novo. O resumo vira a mensagem da lead, com o texto original do
+portal logo abaixo.
+
+- **Outro imóvel:** se o cliente quer visitar um imóvel que a IA recomendou, mande o `listingId`
+  dele. A lead original continua no imóvel do anúncio, e nasce uma lead do outro imóvel para o
+  mesmo corretor.
+- **Lead que não veio de um envio** (o cliente chamou o número da imobiliária direto): mande sem
+  o `originLeadId`, como qualquer lead.
+
+A rota [`/leads/devolver`](/versions/unstable/apis/lead#unstableleadsdevolver), com `leadId` e
+`summary`, faz a mesma devolução, sem outro imóvel, e continua valendo.
+
+## Prazo
+
+A IA tem **6 horas**, contadas da chegada da lead. Passado o prazo, a lead vai sozinha para o
+corretor, como uma lead comum do portal, sem a marca de atendida pela IA. A lead de quem não
+respondeu à IA chega ao corretor assim.
+
+Se a IA devolver depois do prazo, o resumo entra na lead e o corretor é avisado de novo, uma vez,
+agora como atendida pela IA.
 
 ## Falhas
 
@@ -72,7 +91,8 @@ da rota estão na [API de leads](/versions/unstable/apis/lead#unstableleadsdevol
 - **O serviço foi desligado, ou o corretor desligou a IA:** as leads que estavam com a IA vão para
   os corretores na hora.
 
-Nos dois casos, se a IA devolver a lead depois, a resposta é `200` e ninguém é avisado de novo.
+Nos dois casos, se a IA devolver a lead depois, a resposta é `200`, o resumo entra na lead e o
+corretor é avisado de novo, uma vez. Devolução repetida não avisa ninguém.
 
 Com mais de um webhook de leads cadastrado, a lead vai para todos, e fica com a IA se pelo menos
 um aceitar.

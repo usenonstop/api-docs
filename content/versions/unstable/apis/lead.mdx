@@ -20,6 +20,9 @@ export interface Lead {
   email: string | null;
   message: string | null;
   transactionType: TransactionType;
+  // opcional, só para a IA do atendimento por IA: o `lead.id` que ela
+  // recebeu no `lead:create` (veja "Lead que volta da IA" abaixo)
+  originLeadId?: string | null;
 }
 
 type LeadOrigin =
@@ -80,10 +83,44 @@ Nem todo atendimento chega a um anúncio: o cliente pede para falar com uma pess
 }
 ```
 
+## Lead que volta da IA
+
+Para a IA do [atendimento por IA](/versions/unstable/webhooks/ia). Ela devolve por esta mesma rota a lead que recebeu, já atendida: basta mandar no `originLeadId` o `lead.id` que chegou no envio [`lead:create`](/versions/unstable/webhooks/lead). A lead de quem falou com a IA sem ter passado por um envio, como quem chamou o número da imobiliária direto, vai sem o campo e é criada como qualquer outra.
+
+- **A lead não é criada de novo.** A lead original vai para o corretor que já era dela, sem passar pelo rodízio e com a origem do portal preservada. O `message` (o resumo do atendimento) vira a mensagem da lead, com o texto original do portal logo abaixo. O aviso de WhatsApp e e-mail sai marcado como atendido pela IA, e os webhooks de leads não recebem a lead de novo.
+- **Outro imóvel:** se o `listingId` é de outro imóvel, porque o cliente quer visitar um imóvel que a IA recomendou, a lead original continua no imóvel dela e nasce uma lead do outro imóvel, para o **mesmo corretor**. Nome, telefone, WhatsApp e e-mail que vierem `null` são copiados da lead original. Com `listingId: null`, ou com o imóvel da própria lead, só a lead original é devolvida.
+- **Depois do prazo:** se a lead já tinha ido para o corretor sem resumo, porque a IA passou do prazo de 6 horas, porque a entrega à IA falhou ou porque o serviço foi desligado, o resumo entra na lead e o corretor é avisado de novo, uma vez.
+- **Pode reenviar:** a mesma chamada repetida responde `200` e não cria nem avisa nada de novo. Vale o primeiro resumo.
+- **`originLeadId` desconhecido**, ou de lead de outra imobiliária: a lead é criada como se o campo não tivesse vindo.
+- Use o token da API da imobiliária que ligou o serviço.
+
+``` json filename="lead-que-volta-da-ia.json" copy
+{
+  "listingId": "corretor-exemplo#AB12C",
+  "originLeadId": "67d4e5f6a7b8c9d0e1f2a3b4",
+  "origin": "WHATSAPP",
+  "name": "Maria Souza",
+  "phone": null,
+  "whatsapp": "+5511999998888",
+  "email": null,
+  "message": "Prefere este imóvel ao do anúncio. Quer visitar no sábado de manhã; aprovada no financiamento até R$ 900 mil.",
+  "transactionType": "SELL"
+}
+```
+
+| Resposta | Quando |
+| --- | --- |
+| `200` `{"ok":true,"message":"lead devolvida ao corretor"}` | A lead estava com a IA e foi para o corretor. |
+| `200` `{"ok":true,"message":"a lead já estava com o corretor; o resumo foi acrescentado a ela"}` | A lead já tinha ido para o corretor sem resumo. O corretor é avisado do resumo. |
+| `200` `{"ok":true,"message":"lead já tinha sido entregue ao corretor"}` | Chamada repetida. Nada muda. |
+| `200` `{"ok":true}` | Sem `originLeadId`, ou com um desconhecido: lead nova, como sempre. |
+
+Com outro imóvel, a mensagem termina em `; lead do outro imóvel criada para o mesmo corretor`, ou em `; lead do outro imóvel já tinha sido criada` na chamada repetida.
+
 ## /unstable/leads/devolver
 **Method: POST**
 
-Rota da IA do [atendimento por IA](/versions/unstable/webhooks/ia): devolve a lead que a IA recebeu, já atendida. Só aqui a lead chega ao corretor (CRM, WhatsApp e e-mail), sem criar outra lead e sem passar pelo rodízio de novo. Os webhooks de leads não recebem a lead de novo.
+Rota da IA do [atendimento por IA](/versions/unstable/webhooks/ia): devolve a lead que a IA recebeu, já atendida, sem criar outra lead e sem passar pelo rodízio de novo. Os webhooks de leads não recebem a lead de novo. O [`/leads/criar` com `originLeadId`](#lead-que-volta-da-ia) faz o mesmo e ainda aceita outro imóvel; as duas rotas valem.
 
 Use o token da API da imobiliária que ligou o serviço. Lead de outra imobiliária responde `404`, como lead inexistente.
 
@@ -100,11 +137,14 @@ export interface ReturnedLead {
 | Resposta | Quando |
 | --- | --- |
 | `200` `{"ok":true}` | A lead foi entregue ao corretor. |
-| `200` `{"ok":true,"message":"lead já tinha sido entregue ao corretor"}` | A devolução foi repetida, ou a lead já tinha ido para o corretor porque a entrega à IA falhou ou o serviço foi desligado. O resumo fica guardado e ninguém é avisado de novo. |
+| `200` `{"ok":true,"message":"a lead já estava com o corretor; o resumo foi acrescentado a ela"}` | A lead já tinha ido para o corretor sem resumo: pelo prazo de 6 horas, porque a entrega à IA falhou ou porque o serviço foi desligado. O resumo entra na lead e o corretor é avisado de novo, uma vez. |
+| `200` `{"ok":true,"message":"lead já tinha sido entregue ao corretor"}` | A devolução foi repetida. Nada muda e ninguém é avisado de novo. |
 | `400` | Corpo inválido ou token inválido. |
 | `404` | `leadId` desconhecido ou de outra imobiliária. |
 
 Como a resposta repetida também é `200`, dá para reenviar a devolução com segurança se a sua chamada cair no meio.
+
+Nem sempre foi assim. Até 05/11/2026, o resumo que chegava com a lead já no corretor ficava só guardado, sem chegar a ele.
 
 ``` ts filename="actions.ts" copy
 export async function returnLead(lead: ReturnedLead) {
