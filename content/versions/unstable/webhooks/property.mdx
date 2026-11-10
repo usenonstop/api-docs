@@ -167,6 +167,7 @@ type CondoFeature =
   | "BICICLETARIO"
   | "BIKE_ROOM"
   | "BRINQUEDOTECA"
+  | "CARREGADOR_COMPARTILHADO"
   | "CHURRASQUEIRA"
   | "CINEMA"
   | "CONTROLE_DE_ACESSO"
@@ -220,10 +221,17 @@ type CondoFeature =
   | "SPORTS_BAR"
   | "VAGA_CARRO_ELETRICO"
   | "VAGAS_DE_VISITANTE"
+  | "VAGAS_PREPARADAS_PARA_CARREGADOR"
   | "VAGAS_SORTEADAS"
   | "VESTIARIO"
   | "ZELADOR";
 ```
+
+`CARREGADOR_COMPARTILHADO` é o ponto de recarga de carro elétrico na área
+comum; `VAGAS_PREPARADAS_PARA_CARREGADOR`, a garagem que leva ponto de energia
+ou tubulação até as vagas das unidades. `VAGA_CARRO_ELETRICO` é valor antigo e
+ambíguo — segue chegando nos condomínios que o têm, mas não é mais marcado em
+cadastro novo.
 
 ## ParkingLot
 ``` ts filename="type.d.ts" copy
@@ -233,6 +241,7 @@ export interface ParkingLot {
   type: "DETERMINADA" | "INDETERMINADA";
   coverage: "COBERTA" | "DESCOBERTA" | null;
   access: "INDEPENDENTE" | "PRESA_ENTRE_SI" | "PRESA_DE_TERCEIRO" | null;
+  evCharger: "INSTALADO" | "INFRAESTRUTURA" | null;
   notes: string | null;
   registryNumber: number | null;
 }
@@ -250,6 +259,13 @@ exige; `PRESA_ENTRE_SI` é presa por outra vaga do mesmo imóvel; e
 Vale lembrar que **type** é um eixo diferente: `INDETERMINADA` é a vaga sorteada
 entre os condôminos. Nesse caso `coverage` costuma vir `null`, porque a
 cobertura muda a cada sorteio e não é atributo da unidade.
+
+**evCharger** é o carregador particular de carro elétrico na própria vaga:
+`INSTALADO` quando há o aparelho (wallbox) instalado; `INFRAESTRUTURA` quando
+há ponto de energia ou tubulação preparada, mas não o aparelho. `null` é **não
+informado**, e é o caso da quase totalidade das vagas. O carregador de uso
+comum não vem aqui: é a característica `CARREGADOR_COMPARTILHADO` do
+condomínio.
 
 ## Face
 ``` ts filename="type.d.ts" copy

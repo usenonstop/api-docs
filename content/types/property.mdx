@@ -195,6 +195,7 @@ type FilterCondoFeature =
   | "ACADEMIA"
   | "ACEITA_AIRBNB"
   | "BRINQUEDOTECA"
+  | "CARREGADOR_COMPARTILHADO"
   | "CHURRASQUEIRA"
   | "ELEVADOR"
   | "GARAGEM_TODA_COBERTA"
@@ -264,6 +265,7 @@ export interface ParkingLot {
   type: "DETERMINADA" | "INDETERMINADA";
   coverage: "COBERTA" | "DESCOBERTA" | null;
   access: "INDEPENDENTE" | "PRESA_ENTRE_SI" | "PRESA_DE_TERCEIRO" | null;
+  evCharger: "INSTALADO" | "INFRAESTRUTURA" | null;
   notes: string | null;
   registryNumber: number | null;
 }

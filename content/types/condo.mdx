@@ -13,6 +13,7 @@ type CondoFeatures =
   | "BICICLETARIO"
   | "BIKE_ROOM"
   | "BRINQUEDOTECA"
+  | "CARREGADOR_COMPARTILHADO"
   | "CHURRASQUEIRA"
   | "CINEMA"
   | "CONTROLE_DE_ACESSO"
@@ -66,6 +67,7 @@ type CondoFeatures =
   | "SPORTS_BAR"
   | "VAGA_CARRO_ELETRICO"
   | "VAGAS_DE_VISITANTE"
+  | "VAGAS_PREPARADAS_PARA_CARREGADOR"
   | "VAGAS_SORTEADAS"
   | "VESTIARIO"
   | "ZELADOR";
@@ -95,3 +97,11 @@ export interface CondoEmbed {
   yearOfConstruction: number | null;
 }
 ```
+
+**Carro elétrico.** `CARREGADOR_COMPARTILHADO` é o ponto de recarga na área
+comum, de uso de qualquer condômino. `VAGAS_PREPARADAS_PARA_CARREGADOR` diz que
+a garagem leva ponto de energia ou tubulação até as vagas das unidades, para o
+morador instalar o próprio carregador. O carregador particular de cada vaga vem
+no imóvel, em `ParkingLot.evCharger`. `VAGA_CARRO_ELETRICO` é um valor antigo e
+ambíguo: continua aparecendo nos condomínios que o têm, mas não é mais marcado
+em cadastro novo.
