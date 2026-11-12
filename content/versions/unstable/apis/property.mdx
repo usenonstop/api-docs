@@ -288,6 +288,7 @@ minSuites?: number
 minParkingLots?: number
 accepts?: Accepts[]
 status?: Status[]
+directFromDeveloper?: ("SIM" | "NAO")[]
 type?: PropertyType[]
 use?: Use[]
 face?: Face[]
@@ -360,6 +361,8 @@ O parâmetro **minParkingLots** é opcional e irá definir a quantidade mínima 
 O parâmetro **accepts** é opcional e irá filtrar por imóveis que aceitem permuta, financiamento, ou ambos.
 
 O parâmetro **status** é opcional e irá filtrar por imóveis que estejam em um dos status selecionados.
+
+O parâmetro **directFromDeveloper** é opcional e filtra por quem vende: `SIM` traz só os imóveis vendidos pela própria construtora ("Direto com a construtora"), `NAO` só a revenda. Vazio ou os dois não filtra.
 
 O parâmetro **type** é opcional e irá filtrar por imóveis que sejam de uma das tipologias selecionadas.
 
@@ -538,6 +541,7 @@ minSuites?: number
 minParkingLots?: number
 accepts?: Accepts[]
 status?: Status[]
+directFromDeveloper?: ("SIM" | "NAO")[]
 type?: PropertyType[]
 use?: Use[]
 face?: Face[]

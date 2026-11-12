@@ -321,6 +321,7 @@ export interface CardProperty {
   mgmt: Mgmt;
   sharedMgmtUser: UserEmbed | null;
   createdAt: Date;
+  directFromDeveloper: boolean; // "Direto com a construtora": quem vende é a própria construtora
 }
 ```
 
@@ -355,6 +356,7 @@ export interface CommonFields {
   media: Media;
   updatedAt: Date;
   createdAt: Date;
+  directFromDeveloper: boolean; // "Direto com a construtora": quem vende é a própria construtora, e não um investidor que comprou dela
 }
 
 interface ResidentialProperty extends CommonFields {
