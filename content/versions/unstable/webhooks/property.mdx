@@ -73,6 +73,7 @@ export interface Property {
     natural: number | null;
   };
   areas: Areas;
+  unregisteredArea: UnregisteredArea | null;
   yearOfConstruction: number | null;
   renovation: Renovation | null;
   address: Address;
@@ -292,6 +293,15 @@ export interface Renovation {
     | "COZINHA_BANHEIROS"
     | "COMPLETA"
     | "COMPLETA_PROJETO";
+}
+```
+
+## UnregisteredArea
+Área construída que **não está averbada** na matrícula — o mezanino no pé-direito duplo, a edícula, a ampliação —, informada pelo corretor; `null` quando toda a área é averbada (desde 16/11/2026). Soma-se a `areas.private`, que é a área averbada: a área real é `areas.private + area`. Quem exibe a área real deve avisar o comprador de que parte dela não é averbada. Mudar este campo dispara o `property:update`.
+``` ts filename="type.d.ts" copy
+export interface UnregisteredArea {
+  area: number; // m² não averbados, além de areas.private
+  description: string | null; // o que é ("mezanino sobre a sala")
 }
 ```
 

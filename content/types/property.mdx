@@ -71,6 +71,15 @@ interface Renovation {
     | "COMPLETA_PROJETO";
 }
 
+// Área construída que NÃO está averbada na matrícula — o mezanino no
+// pé-direito duplo, a edícula, a ampliação —, informada pelo corretor (desde
+// 16/11/2026). Soma-se a `areas.private`, que é a área averbada:
+// área real = areas.private + area. `null` = toda a área é averbada.
+interface UnregisteredArea {
+  area: number; // m² não averbados, além de areas.private
+  description: string | null; // o que é ("mezanino sobre a sala")
+}
+
 type Feature =
   | "ADEGA_CLIMATIZADA"
   | "AGUA_QUENTE"
@@ -316,6 +325,7 @@ export interface CardProperty {
   baths: number | null;
   values: Values;
   areas: Areas;
+  unregisteredArea: UnregisteredArea | null;
   address: Address;
   user: UserEmbed;
   mgmt: Mgmt;
@@ -340,6 +350,7 @@ export interface CommonFields {
   sharedMgmtUser: UserEmbed | null;
   values: Values;
   areas: Areas;
+  unregisteredArea: UnregisteredArea | null;
   yearOfConstruction: number | null;
   renovation: Renovation | null;
   condo: CondoEmbed | null
